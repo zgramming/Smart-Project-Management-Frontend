@@ -1,12 +1,16 @@
+import { AuthenticationContext } from '@/context/AuthenticationContext';
 import useBreakpoint from '@/hooks/useBreakpoint';
 import { Menu, Avatar } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
+import { useContext } from 'react';
 
 const AccountAvatar = () => {
   const { isMobile } = useBreakpoint();
   const { replace } = useRouter();
+  const context = useContext(AuthenticationContext);
   const onLogout = () => {
+    context.removeToken();
     replace('/login');
   };
   return (

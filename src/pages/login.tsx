@@ -1,22 +1,25 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useForm } from '@mantine/form';
 import Logo from '@images/logo.png';
-import { Button, Checkbox, Group, PasswordInput, Stack, TextInput } from '@mantine/core';
+import { Button, PasswordInput, Stack, TextInput } from '@mantine/core';
 import BGLogin from '@images/bg-login.png';
 import { getErrorMessageAxios } from '@/utils/function';
 import { notifications } from '@mantine/notifications';
+import { AuthRepository } from '@/features/auth/auth.repository';
+import { useContext } from 'react';
+import { AuthenticationContext } from '@/context/AuthenticationContext';
+import { useRouter } from 'next/router';
 
 export default function Page() {
   const { push } = useRouter();
-
+  const context = useContext(AuthenticationContext);
   const onSubmit = async (values: any) => {
     try {
-      console.log({
-        username: values.username,
-        password: values.password,
-      });
+      const result = await AuthRepository.api.login(values);
+
+      context.setToken(result.data.token);
+
       push('/');
     } catch (e) {
       const message = getErrorMessageAxios(e);
@@ -97,36 +100,23 @@ export default function Page() {
               lg:pb-3 lg:text-left lg:text-4xl
             `}
             >
-              Masuk Agen Pegadaian
+              Masuk SPM <i>(Smart Project Management)</i>
             </div>
-            <div
-              className={`
-              text-center text-base font-medium pb-3
-              lg:pb-10 lg:text-xl lg:text-left
-            `}
-            >
-              Mengatasi Masalah tanpa Masalah
-            </div>
-
-            <Stack gap={'lg'}>
-              <Stack gap={5}>
-                <div className="text-base font-medium lg:text-xl">Username</div>
-                <TextInput placeholder="Username" {...form.getInputProps('username')} />
-              </Stack>
-              <Stack gap={5}>
-                <div className="text-base font-medium lg:text-xl">Password</div>
-                <PasswordInput placeholder="Username" {...form.getInputProps('password')} />
-              </Stack>
-              <Group justify="apart">
-                <Checkbox label="Remember Me" {...form.getInputProps('remember')} />
-                <Button variant="subtle" color="gray">
-                  Forgot Password
+            <form onSubmit={form.onSubmit(onSubmit)}>
+              <Stack gap={'lg'}>
+                <Stack gap={5}>
+                  <div className="text-base font-medium lg:text-xl">Username</div>
+                  <TextInput placeholder="Username" {...form.getInputProps('username')} />
+                </Stack>
+                <Stack gap={5}>
+                  <div className="text-base font-medium lg:text-xl">Password</div>
+                  <PasswordInput placeholder="Username" {...form.getInputProps('password')} />
+                </Stack>
+                <Button variant="filled" type="submit" size="lg" fullWidth>
+                  Masuk
                 </Button>
-              </Group>
-              <Button variant="filled" size="lg" fullWidth onClick={onSubmit}>
-                Masuk
-              </Button>
-            </Stack>
+              </Stack>
+            </form>
           </div>
         </div>
       </div>

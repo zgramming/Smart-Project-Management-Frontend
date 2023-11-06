@@ -1,4 +1,4 @@
-export const baseApiURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
+export const baseApiURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}`;
 export const baseFileURL = `${baseApiURL}/uploads`;
 export const TOKEN_KEY = 'token';
 

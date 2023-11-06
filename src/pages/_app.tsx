@@ -8,6 +8,7 @@ import { ReactElement, ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import MantineCustomProvider from '@/context/MantineCustomContext';
 import SidebarLayoutProvider from '@/context/SidebarLayoutContext';
+import AuthProvider from '@/context/AuthenticationContext';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   // eslint-disable-next-line no-unused-vars
@@ -23,7 +24,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <MantineCustomProvider>
-        <SidebarLayoutProvider>{getLayout(<Component {...pageProps} />)}</SidebarLayoutProvider>
+        <AuthProvider>
+          <SidebarLayoutProvider>{getLayout(<Component {...pageProps} />)}</SidebarLayoutProvider>
+        </AuthProvider>
       </MantineCustomProvider>
     </>
   );

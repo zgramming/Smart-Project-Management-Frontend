@@ -1,4 +1,4 @@
-import { Card, Stack } from '@mantine/core';
+import { Card, LoadingOverlay, Stack } from '@mantine/core';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -6,8 +6,8 @@ import { useRouter } from 'next/router';
 import SubModulIcon from '@images/icon_sub_modul.png';
 import ModulIcon from '@images/icon_modul.png';
 import useBreakpoint from '@/hooks/useBreakpoint';
-import { dummmyModulAndMenuV2 } from '@/utils/dummy_data';
 import HeaderLayoutIndex from '@/components/layout/HeaderLayoutIndex';
+import { AccessCategoryModulRepository } from '@/features/setting/access-category-modul/access-category-modul.repository';
 
 type ContentIndexItemProps = {
   index: number;
@@ -35,23 +35,25 @@ const ContentIndexItem = ({ index, name, path }: ContentIndexItemProps) => {
 };
 
 const ContentIndex = () => {
+  const { data: items } = AccessCategoryModulRepository.hooks.useListAccessByRole();
   return (
     <>
-      {dummmyModulAndMenuV2.map((category) => {
-        const moduls = category.moduls;
+      {items.map((accessCategoryModul) => {
+        const categoryModul = accessCategoryModul.CategoryModul;
+        const moduls = categoryModul.AccessModul.map((accessModul) => accessModul.Modul);
         return (
-          <div key={category.code} className={`px-5 lg:px-20`}>
+          <div key={categoryModul.code} className={`px-5 lg:px-20`}>
             <Stack gap={'md'}>
               <div className="flex flex-row items-center justify-start gap-2">
-                <div className="font-bold text-primary text-base lg:text-xl">{category.name}</div>
+                <div className="font-bold text-primary text-base lg:text-xl">{categoryModul.name}</div>
                 <Image src={SubModulIcon} alt="Divider Modul" width={30} />
                 <div className="grow h-[1px] bg-gray-300"></div>
               </div>
               <div className="grid grid-cols-2 xl:grid-cols-5 gap-3 lg:gap-10">
                 {moduls.map((modul, index) => {
-                  const { name } = modul;
-                  const menus = modul.menus ?? [];
-                  const path = menus.length > 0 ? menus[0].path : '/';
+                  const { name, AccessMenu } = modul;
+                  const menus = AccessMenu.map((accessMenu) => accessMenu.Menu) || [];
+                  const path = menus.length > 0 ? menus[0].prefix : '/';
                   return <ContentIndexItem key={index} index={index} name={name} path={path} />;
                 })}
               </div>
@@ -64,12 +66,15 @@ const ContentIndex = () => {
 };
 
 export default function Home() {
+  const { isLoading } = AccessCategoryModulRepository.hooks.useListAccessByRole();
+
   return (
     <>
       <Head>
         <title>Home</title>
       </Head>
       <div className="min-h-screen">
+        <LoadingOverlay visible={isLoading} />
         <Stack gap={'lg'}>
           <HeaderLayoutIndex useShadow />
           <ContentIndex />

@@ -96,7 +96,7 @@ const LogoComponent = () => {
       <Image
         src={Logo}
         alt="Logo"
-        width={isMobile ? 150 : 250}
+        width={isMobile ? 150 : 200}
         style={{
           objectFit: 'cover',
         }}
@@ -159,7 +159,7 @@ export default function AdminLayout({ children, breadcrumbsOverride, title }: Ad
         </AppShell.Header>
         <AppShell.Navbar>
           <AppShell.Section>
-            <div className="flex flex-row items-center px-5 py-5">
+            <div className="flex flex-row items-center justify-center px-5 py-5">
               <Burger opened={openedSidebar} onClick={toggleSidebar} size="sm" className="lg:hidden" />
               <LogoComponent />
             </div>

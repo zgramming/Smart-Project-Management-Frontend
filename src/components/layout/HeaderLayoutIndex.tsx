@@ -1,4 +1,3 @@
-import useBreakpoint from '@/hooks/useBreakpoint';
 import Logo from '@images/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,19 +9,20 @@ type HeaderLayoutIndexProps = {
 };
 const HeaderLayoutIndex = ({ useShadow = false, currentModule }: HeaderLayoutIndexProps) => {
   const now = 'Selasa, 12 Oktober 2021 10:00:00';
-  const { isMobile, isDesktop } = useBreakpoint();
 
   return (
     <div
       id="header-index"
       className={`
       h-full relative flex flex-row justify-between ${useShadow && 'shadow'}
-      lg:px-20 
+      lg:px-20
       `}
     >
-      <div className="basis-0 grow flex flex-col justify-center">
-        <Link href="/" className="w-min">
-          <Image src={Logo} alt="Logo" width={isMobile ? 150 : isDesktop ? 200 : 250} />
+      <div className="basis-0 grow ">
+        <Link href="/" className="w-min h-full">
+          <div className="relative w-52 h-full">
+            <Image src={Logo} alt="Logo" layout="fill" objectFit="contain" />
+          </div>
         </Link>
       </div>
       <div

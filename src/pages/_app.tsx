@@ -1,6 +1,8 @@
 import '@/styles/globals.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/nprogress/styles.css';
 
 import { NextPage } from 'next';
 import { ReactElement, ReactNode } from 'react';

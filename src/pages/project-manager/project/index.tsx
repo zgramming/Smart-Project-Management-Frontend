@@ -1,11 +1,12 @@
 import PaginationComponent, { PaginationSize } from '@/components/PaginationComponent';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { dummyModul } from '@/utils/dummy_data';
-import { Button, Card, Flex, Grid, Group, Modal, ScrollArea, Select, Stack, Table, TextInput } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import { useDisclosure } from '@mantine/hooks';
+import { ProjectManagerProjectRepository } from '@/features/project-manager/project/project-manager-project.repository';
+import { getErrorMessageAxios, readableDate } from '@/utils/function';
+import { Button, Card, Flex, Grid, Group, LoadingOverlay, Stack, Table, TextInput } from '@mantine/core';
+import { useDebouncedState } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { IconCalendar, IconFilter, IconPlus, IconSearch } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -17,9 +18,17 @@ export default function Page() {
   const { push } = useRouter();
   const [activePagination, setPagination] = useState(1);
   const [sizePagination, setSizePagination] = useState<PaginationSize>('10');
-  const [searchQuery, setSearchQuery] = useState<string | undefined>();
-  const [isModalFilterOpen, { open: openModalFilter, close: closeModalFilter }] = useDisclosure(false);
-
+  const [searchQuery, setSearchQuery] = useDebouncedState<string | undefined>(undefined, 500);
+  const {
+    data: projects,
+    isLoading: isLoadingListProject,
+    total: totalListProject,
+    mutate: reloadProject,
+  } = ProjectManagerProjectRepository.hooks.useListProject({
+    page: activePagination,
+    pageSize: parseInt(sizePagination),
+    name: searchQuery,
+  });
   const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
 
@@ -34,18 +43,34 @@ export default function Page() {
     push('project/form');
   };
 
-  const onEditButton = () => {
+  const onEditButton = (id: number) => {
     push({
       pathname: 'project/form',
-      query: { id: 1, action: 'edit' },
+      query: { id, action: 'edit' },
     });
   };
 
-  const onDeleteHandler = () => {
-    alert('Delete');
+  const onDeleteHandler = async (id: string) => {
+    try {
+      const result = await ProjectManagerProjectRepository.api.delete(id);
+      notifications.show({
+        title: 'Success',
+        color: 'blue',
+        message: result.message,
+      });
+
+      reloadProject();
+    } catch (error) {
+      const message = getErrorMessageAxios(error);
+      notifications.show({
+        title: 'Error',
+        color: 'red',
+        message,
+      });
+    }
   };
 
-  const onDeleteButton = () => {
+  const onDeleteButton = (id: string) => {
     modals.openConfirmModal({
       title: 'Konfirmasi',
       children: 'Apakah anda yakin ingin menghapus data ini?',
@@ -56,7 +81,7 @@ export default function Page() {
       confirmProps: {
         color: 'red',
       },
-      onConfirm: onDeleteHandler,
+      onConfirm: () => onDeleteHandler(id),
       onCancel: () => {
         alert('Cancel');
       },
@@ -66,6 +91,7 @@ export default function Page() {
   return (
     <>
       <Card withBorder>
+        <LoadingOverlay visible={isLoadingListProject} />
         <Stack gap={'md'}>
           <Grid gutter={'lg'}>
             <Grid.Col
@@ -81,12 +107,9 @@ export default function Page() {
                 <TextInput
                   placeholder="Cari sesuatu..."
                   rightSection={<IconSearch />}
-                  value={searchQuery}
+                  defaultValue={searchQuery}
                   onChange={onChangeSearch}
                 />
-                <Button leftSection={<IconFilter size="1rem" />} variant="outline" onClick={openModalFilter}>
-                  Filter
-                </Button>
               </Group>
             </Grid.Col>
             <Grid.Col
@@ -115,26 +138,33 @@ export default function Page() {
                     <Table.Th>NAME</Table.Th>
                     <Table.Th>START DATE</Table.Th>
                     <Table.Th>END DATE</Table.Th>
+                    <Table.Th>MEMBERS</Table.Th>
                     <Table.Th>STATUS</Table.Th>
                     <Table.Th>KONTROL</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <tbody>
-                  {dummyModul.map((item) => {
+                  {projects?.map((item, index) => {
                     return (
                       <Table.Tr key={item.id}>
-                        <Table.Td>{item.id}</Table.Td>
-                        <Table.Td>{item.id}</Table.Td>
-                        <Table.Td>{item.id}</Table.Td>
-                        <Table.Td>{item.id}</Table.Td>
-                        <Table.Td>{item.id}</Table.Td>
-                        <Table.Td>{item.id}</Table.Td>
+                        <Table.Td>{`${index + 1}`}</Table.Td>
+                        <Table.Td>{item.ProjectClient.name}</Table.Td>
+                        <Table.Td>{item.name}</Table.Td>
+                        <Table.Td>{readableDate(item.startDate)}</Table.Td>
+                        <Table.Td>{readableDate(item.endDate)}</Table.Td>
+                        <Table.Td>{item.ProjectMember.length}</Table.Td>
+                        <Table.Td>{item.status}</Table.Td>
                         <Table.Td>
                           <Group>
-                            <Button variant="outline" size="xs" color="blue" onClick={onEditButton}>
+                            <Button variant="outline" size="xs" color="blue" onClick={() => onEditButton(item.id)}>
                               Edit
                             </Button>
-                            <Button variant="outline" size="xs" color="red" onClick={onDeleteButton}>
+                            <Button
+                              variant="outline"
+                              size="xs"
+                              color="red"
+                              onClick={() => onDeleteButton(`${item.id}`)}
+                            >
                               Hapus
                             </Button>
                           </Group>
@@ -148,66 +178,13 @@ export default function Page() {
             <PaginationComponent
               activePagination={activePagination}
               paginationSize={sizePagination}
-              total={100}
+              total={totalListProject}
               onChangePagination={setPagination}
               onChangePaginationSize={setSizePagination}
             />
           </Stack>
         </Stack>
       </Card>
-      {/* Modal Filter */}
-      <Modal
-        opened={isModalFilterOpen}
-        onClose={closeModalFilter}
-        title="Filter"
-        size={'md'}
-        scrollAreaComponent={ScrollArea.Autosize}
-        overlayProps={{
-          opacity: 0.55,
-          blur: 3,
-        }}
-      >
-        <Stack gap={'sm'}>
-          <Select
-            label="Jenis Perhiasan"
-            placeholder="Pilih Jenis Perhiasan"
-            data={dummyModul.map((item) => ({ value: `${item.id}`, label: item.name }))}
-            nothingFoundMessage="No options"
-            searchable
-            clearable
-          />
-          <Select
-            label="Pembayaran"
-            placeholder="Pilih Pembayaran"
-            data={dummyModul.map((item) => ({ value: `${item.id}`, label: item.name }))}
-            nothingFoundMessage="No options"
-            searchable
-            clearable
-          />
-          <Group gap={'md'} grow>
-            <DatePickerInput
-              dropdownType="modal"
-              rightSection={<IconCalendar />}
-              label="Mulai"
-              placeholder="Mulai"
-              valueFormat="YYYY-MM-DD"
-            />
-            <DatePickerInput
-              dropdownType="modal"
-              rightSection={<IconCalendar />}
-              label="Selesai"
-              placeholder="Selesai"
-              valueFormat="YYYY-MM-DD"
-            />
-          </Group>
-          <Group justify="right">
-            <Button onClick={closeModalFilter} variant="default">
-              Cancel
-            </Button>
-            <Button type="submit">Submit</Button>
-          </Group>
-        </Stack>
-      </Modal>
     </>
   );
 }

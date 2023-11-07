@@ -169,7 +169,6 @@ export default function AdminLayout({ children, breadcrumbsOverride, title }: Ad
   const { openedSidebar, toggleSidebar } = useContext(SidebarLayoutContext);
 
   const { pathname, query, back } = useRouter();
-  // const { menus } = getInformationModulAndMenu(pathname);
 
   const routePath = convertRoutePathToArray(pathname).map((item) => item.toUpperCase());
   const { data } = AccessCategoryModulRepository.hooks.useListAccessByRole();

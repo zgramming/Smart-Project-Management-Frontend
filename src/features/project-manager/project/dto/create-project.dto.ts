@@ -2,10 +2,10 @@ import { ActiveStatusEnum, ProjectStatusEnum } from '@/utils/enum';
 
 interface ProjectMember {
   userId: number;
-  status: ActiveStatusEnum;
+  status?: ActiveStatusEnum;
 }
 
-export interface CreateProjectDto {
+export interface ProjectManagerCreateProjectDTO {
   clientId: number;
   name: string;
   code: string;

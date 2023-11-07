@@ -1,6 +1,5 @@
-import { ModulV2 } from '@/interface/category_modul';
-import { dummmyModulAndMenuV2 } from './dummy_data';
 import axios, { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 
 type IsSideMenuActiveProps = {
   currentPath: string;
@@ -60,55 +59,11 @@ const isSideMenuActive = ({ currentPath, link }: IsSideMenuActiveProps) => {
   return isEqual;
 };
 
-export const getInformationModulAndMenu = (path: string) => {
-  try {
-    const joinedSlicePrefix = (prefix: string) => {
-      const splitPrefix = prefix.split('/').filter((item) => item !== '');
-      const joinedPath = splitPath.slice(0, splitPrefix.length).join('/');
-      return joinedPath;
-    };
-
-    const splitPath = path.split('/').filter((item) => item !== '');
-
-    const filteredModul: ModulV2[] = [];
-
-    // current menu : agen/brink_link/approval
-    // prefix : agen/brink_link
-
-    for (const categoryModul of dummmyModulAndMenuV2) {
-      for (const modulItem of categoryModul.moduls) {
-        if (modulItem.prefix.includes(joinedSlicePrefix(modulItem.prefix)) || modulItem.prefix === splitPath[0]) {
-          filteredModul.push(modulItem);
-        }
-      }
-    }
-
-    if (filteredModul.length === 0) {
-      throw new Error('Modul prefix not valid');
-    }
-
-    const modul = filteredModul.find((item) => {
-      if (filteredModul.length === 1) {
-        return true;
-      }
-
-      return item.prefix.includes(joinedSlicePrefix(item.prefix));
-    });
-
-    if (!modul) {
-      throw new Error('Modul not found');
-    }
-
-    return {
-      nameModul: modul.name,
-      menus: modul.menus ?? [],
-    };
-  } catch (error) {
-    return {
-      nameModul: '',
-      menus: [],
-    };
-  }
+const readableDate = (date: string | Date | undefined, format = 'DD MMMM YYYY') => {
+  if (!date) return '';
+  const dateObj = new Date(date);
+  const result = dayjs(dateObj, { locale: 'id-ID' }).format(format);
+  return result;
 };
 
 const numberInputParser = (value: string) => {
@@ -154,6 +109,7 @@ const generateStringPagination = (currentPage: number, PageSize: number, totalDa
 
 export {
   sleep,
+  readableDate,
   convertRoutePathToArray,
   convertObjectIntoQueryParams,
   isSideMenuActive,

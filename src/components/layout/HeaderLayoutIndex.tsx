@@ -15,7 +15,7 @@ const HeaderLayoutIndex = ({ useShadow = false, currentModule }: HeaderLayoutInd
       id="header-index"
       className={`
       h-full relative flex flex-row justify-between ${useShadow && 'shadow'}
-      lg:px-20
+      lg:px-20 lg:py-3
       `}
     >
       <div className="basis-0 grow ">

@@ -54,7 +54,6 @@ const ContentIndex = () => {
                 {moduls.map((modul, index) => {
                   const { name, AccessMenu } = modul;
                   const menus = AccessMenu.map((accessMenu) => accessMenu.Menu) || [];
-                  console.log({ menus });
 
                   const path = menus.length > 0 ? menus[0].prefix : '/';
                   return <ContentIndexItem key={index} index={index} name={name} path={path} />;

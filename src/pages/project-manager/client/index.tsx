@@ -1,8 +1,11 @@
 import PaginationComponent, { PaginationSize } from '@/components/PaginationComponent';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerClientRepository } from '@/features/proyek-manager/client/project-manager-client.repository';
+import { ProjectManagerClientRepository } from '@/features/project-manager/client/project-manager-client.repository';
+import { getErrorMessageAxios } from '@/utils/function';
 import { Button, Card, Flex, Grid, Group, LoadingOverlay, Stack, Table, TextInput } from '@mantine/core';
+import { useDebouncedState } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -15,12 +18,13 @@ export default function Page() {
   const { push } = useRouter();
   const [activePagination, setPagination] = useState(1);
   const [sizePagination, setSizePagination] = useState<PaginationSize>('10');
-  const [searchQuery, setSearchQuery] = useState<string | undefined>();
+  const [searchQuery, setSearchQuery] = useDebouncedState<string | undefined>(undefined, 500);
 
   const {
     data: clients,
     total: totalClients,
     isLoading: isLoadingClients,
+    mutate: reloadClients,
   } = ProjectManagerClientRepository.hooks.useListClient({
     page: activePagination,
     pageSize: parseInt(sizePagination),
@@ -41,18 +45,33 @@ export default function Page() {
     push('client/form');
   };
 
-  const onEditButton = () => {
+  const onEditButton = (id: string) => {
     push({
       pathname: 'client/form',
-      query: { id: 1, action: 'edit' },
+      query: { id: id, action: 'edit' },
     });
   };
 
-  const onDeleteHandler = () => {
-    alert('Delete');
+  const onDeleteHandler = async (id: string) => {
+    try {
+      const result = await ProjectManagerClientRepository.api.delete(id);
+      notifications.show({
+        title: 'Success',
+        color: 'green',
+        message: result.message,
+      });
+      reloadClients();
+    } catch (error) {
+      const message = getErrorMessageAxios(error);
+      notifications.show({
+        title: 'Error',
+        color: 'red',
+        message: message,
+      });
+    }
   };
 
-  const onDeleteButton = () => {
+  const onDeleteButton = (id: string) => {
     modals.openConfirmModal({
       title: 'Konfirmasi',
       children: 'Apakah anda yakin ingin menghapus data ini?',
@@ -63,10 +82,10 @@ export default function Page() {
       confirmProps: {
         color: 'red',
       },
-      onConfirm: onDeleteHandler,
-      onCancel: () => {
-        alert('Cancel');
+      onConfirm: () => {
+        onDeleteHandler(id);
       },
+      onCancel: () => {},
     });
   };
 
@@ -89,7 +108,7 @@ export default function Page() {
                 <TextInput
                   placeholder="Cari sesuatu..."
                   rightSection={<IconSearch />}
-                  value={searchQuery}
+                  defaultValue={searchQuery}
                   onChange={onChangeSearch}
                 />
               </Group>
@@ -132,10 +151,10 @@ export default function Page() {
                         <Table.Td>{item._count.Project}</Table.Td>
                         <Table.Td>
                           <Group>
-                            <Button variant="outline" size="xs" color="blue" onClick={onEditButton}>
+                            <Button variant="outline" size="xs" color="blue" onClick={() => onEditButton(item.id)}>
                               Edit
                             </Button>
-                            <Button variant="outline" size="xs" color="red" onClick={onDeleteButton}>
+                            <Button variant="outline" size="xs" color="red" onClick={() => onDeleteButton(item.id)}>
                               Hapus
                             </Button>
                           </Group>

@@ -21,6 +21,8 @@ import { IconCalendar, IconUpload } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 
+Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;
+
 export default function Page() {
   const { back } = useRouter();
   const form = useForm({
@@ -287,5 +289,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;

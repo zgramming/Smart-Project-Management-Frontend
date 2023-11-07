@@ -121,17 +121,21 @@ const numberInputFormatter = (value: string) => {
 
 const getErrorMessageAxios = (error: any) => {
   // Check if axios error
-  let message = 'Terjadi kesalahan pada server';
+  const message = 'Terjadi kesalahan pada server';
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError;
-    if (axiosError.response) {
-      const {
-        data,
-      }: {
-        data: any;
-      } = axiosError.response;
-      message = data.message;
+    if (!axiosError.response) return message;
+
+    const response = axiosError.response;
+    const data = response.data as any;
+
+    const { message: errorMessage } = data;
+
+    if (Array.isArray(errorMessage)) {
+      return errorMessage.map((item, index) => `${index + 1}. ${item}`).join('\n');
     }
+
+    return errorMessage;
   }
 
   return message;

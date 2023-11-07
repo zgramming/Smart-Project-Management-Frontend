@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { ParsedUrlQuery } from 'querystring';
 import { ReactNode, useContext } from 'react';
 
-import { convertRoutePathToArray, getInformationModulAndMenu } from '@/utils/function';
+import { convertRoutePathToArray } from '@/utils/function';
 import { AppShell, Box, Burger, Button, ScrollArea, Stack } from '@mantine/core';
 
 import useBreakpoint from '@/hooks/useBreakpoint';
@@ -14,6 +14,8 @@ import NavbarMenuItem from './NavbarMenuItem';
 import { SidebarLayoutContext } from '@/context/SidebarLayoutContext';
 import AccountAvatar from '../AccountAvatar';
 import { useRouter } from 'next/router';
+import { AccessCategoryModulRepository } from '@/features/setting/access-category-modul/access-category-modul.repository';
+import { AccessCategoryModulByRoleEntity } from '@/features/setting/access-category-modul/entities/access-category-modul-by-role.entity';
 
 type AdminLayoutProps = {
   children: ReactNode;
@@ -57,6 +59,40 @@ type BreadcrumbsCustomProps = {
 //     ],
 //   },
 // ];
+
+const generateSidebarMenu = (currentPath: string, accessGroup?: AccessCategoryModulByRoleEntity) => {
+  if (!accessGroup) {
+    return [];
+  }
+
+  const items = accessGroup?.data ?? [];
+  const splittedPath = currentPath.split('/').filter((item) => item !== '');
+  const firstPath = splittedPath[0];
+  const secondPath = splittedPath[1];
+
+  const categoryModul = items.map((item) => item.CategoryModul);
+  const accessModul = categoryModul
+    .map((item) =>
+      item.AccessModul.filter((item) => {
+        const isMatchedWithFirstPath = item.Modul.prefix.startsWith(`${firstPath}`);
+        const isMatchedWithFirstAndSecondPath = item.Modul.prefix.startsWith(`${firstPath}/${secondPath}`);
+        return isMatchedWithFirstPath || isMatchedWithFirstAndSecondPath;
+      }),
+    )
+    .flat();
+  const moduls = accessModul.map((item) => item.Modul);
+  const menus = moduls.map((item) => item.AccessMenu.map((item) => item.Menu)).flat();
+  const mappingMenus = menus
+    // Grouping menu by parentMenuId
+    .map((item) => ({
+      ...item,
+      ChildrenMenu: menus.filter((menu) => menu.parentMenuId === item.id),
+    }))
+    // Remove menu that have parentMenuId, because we already grouping it
+    .filter((item) => item.parentMenuId === null);
+
+  return mappingMenus;
+};
 
 const generateBreadcrumbs = ({ path, override }: BreadcrumbsCustomProps) => {
   const pathArray = path.split('/').filter((item) => item !== '');
@@ -133,9 +169,11 @@ export default function AdminLayout({ children, breadcrumbsOverride, title }: Ad
   const { openedSidebar, toggleSidebar } = useContext(SidebarLayoutContext);
 
   const { pathname, query, back } = useRouter();
-  const { menus } = getInformationModulAndMenu(pathname);
+  // const { menus } = getInformationModulAndMenu(pathname);
 
   const routePath = convertRoutePathToArray(pathname).map((item) => item.toUpperCase());
+  const { data } = AccessCategoryModulRepository.hooks.useListAccessByRole();
+  const menus = generateSidebarMenu(pathname, data);
 
   return (
     <>
@@ -166,7 +204,21 @@ export default function AdminLayout({ children, breadcrumbsOverride, title }: Ad
           </AppShell.Section>
           <AppShell.Section grow component={ScrollArea}>
             {menus.map((item) => {
-              return <NavbarMenuItem key={item.id} item={item} />;
+              return (
+                <NavbarMenuItem
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  path={item.prefix}
+                  childrenMenu={
+                    item.ChildrenMenu?.map((item) => ({
+                      id: item.id,
+                      name: item.name,
+                      path: item.prefix,
+                    })) ?? []
+                  }
+                />
+              );
             })}
           </AppShell.Section>
           <AppShell.Section>

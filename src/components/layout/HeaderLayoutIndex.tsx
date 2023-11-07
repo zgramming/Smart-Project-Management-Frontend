@@ -21,7 +21,14 @@ const HeaderLayoutIndex = ({ useShadow = false, currentModule }: HeaderLayoutInd
       <div className="basis-0 grow ">
         <Link href="/" className="w-min h-full">
           <div className="relative w-52 h-full">
-            <Image src={Logo} alt="Logo" layout="fill" objectFit="contain" />
+            <Image
+              src={Logo}
+              alt="Logo"
+              style={{
+                objectFit: 'contain',
+              }}
+              fill
+            />
           </div>
         </Link>
       </div>

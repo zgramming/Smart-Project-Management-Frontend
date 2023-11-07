@@ -1,9 +1,9 @@
 export interface AccessCategoryModulByRoleEntity {
   message: string;
-  data: Daum[];
+  data: Data[];
 }
 
-interface Daum {
+interface Data {
   id: string;
   roleId: number;
   categoryModulId: number;
@@ -41,6 +41,7 @@ interface Modul {
   id: number;
   name: string;
   code: string;
+  prefix: string;
   AccessMenu: AccessMenu[];
 }
 
@@ -53,6 +54,15 @@ interface AccessMenu {
 }
 
 interface Menu {
+  id: number;
+  parentMenuId?: number;
+  name: string;
+  code: string;
+  prefix: string;
+  ChildrenMenu?: ChildrenMenu[];
+}
+
+interface ChildrenMenu {
   id: number;
   name: string;
   code: string;

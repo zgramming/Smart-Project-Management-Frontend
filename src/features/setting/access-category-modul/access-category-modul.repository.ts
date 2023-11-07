@@ -16,7 +16,7 @@ const hooks = {
     } = useSWR<AccessCategoryModulByRoleEntity>(`${url.base}/role`, http.fetcher);
 
     return {
-      data: response?.data ?? [],
+      data: response,
       isLoading,
       error,
       mutate,

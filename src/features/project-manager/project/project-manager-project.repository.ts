@@ -20,7 +20,7 @@ const url = {
 const hooks = {
   useListProject: (params: UseListProjectProps) => {
     const { name, page = 1, pageSize = 100 } = params;
-    let uri = `${url.base}?page=${page}&pageSize=${pageSize}`;
+    let uri = `${url.base}?page=${page}&limit=${pageSize}`;
 
     if (name) {
       uri += `&name=${name}`;

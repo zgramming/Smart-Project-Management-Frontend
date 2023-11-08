@@ -1,5 +1,7 @@
+export const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 export const baseApiURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}`;
-export const baseFileURL = `${baseApiURL}/uploads`;
+export const baseFileURL = `${baseUrl}/uploads`;
+export const baseFileDocumentURL = `${baseFileURL}/document`;
 export const TOKEN_KEY = 'token';
 
 export const availableAccessAction = ['view', 'create', 'update', 'delete', 'print', 'export', 'import', 'approve'];

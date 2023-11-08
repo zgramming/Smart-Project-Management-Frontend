@@ -24,6 +24,14 @@ interface Daum {
 interface Project {
   id: number;
   name: string;
+  clientId: string;
+  ProjectClient: ProjectClient;
+}
+
+interface ProjectClient {
+  id: string;
+  name: string;
+  code: string;
 }
 
 interface ProjectMeetingMember {

@@ -3,6 +3,9 @@ import { UserOnlyDeveloperAndProjectManagerEntity } from './entities/user-only-d
 import { http } from '@/utils/http';
 import { UserMeEntity } from './entities/user-me.entity';
 import { UserEntity } from './entities/user.entity';
+import { IBaseQueryParams } from '@/interface/base_query_params.interface';
+
+interface UseListUserProps extends Partial<IBaseQueryParams> {}
 
 const url = {
   base: `/setting/user`,
@@ -19,8 +22,10 @@ const hooks = {
       mutate,
     };
   },
-  useListUser: () => {
-    const uri = `${url.base}`;
+  useListUser: (params?: UseListUserProps) => {
+    const { page = 1, pageSize = 100 } = params || {};
+    const uri = `${url.base}?page=${page}&limit=${pageSize}`;
+
     const { data, error, isLoading, mutate } = useSWR<UserEntity>(uri, http.fetcher);
     return {
       data: data?.data,

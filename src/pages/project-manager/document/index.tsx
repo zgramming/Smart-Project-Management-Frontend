@@ -1,18 +1,18 @@
 import PaginationComponent, { PaginationSize } from '@/components/PaginationComponent';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerMeetingRepository } from '@/features/project-manager/meeting/project-manager-meeting.repository';
-import { getErrorMessageAxios, readableDate } from '@/utils/function';
-import { Button, Card, Flex, Grid, Group, LoadingOverlay, Stack, Table, TextInput } from '@mantine/core';
+import { ProjectManagerDocumentRepository } from '@/features/project-manager/document/project-manager-document.repository';
+import { baseFileDocumentURL } from '@/utils/constant';
+import { getErrorMessageAxios } from '@/utils/function';
+import { ActionIcon, Button, Card, Flex, Grid, Group, LoadingOverlay, Stack, Table, TextInput } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
-import Link from 'next/link';
+import { IconFile3d, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 Page.getLayout = function getLayout(page: any) {
-  return <AdminLayout title="Project Manager - Meeting">{page}</AdminLayout>;
+  return <AdminLayout title="Project Manager - Document">{page}</AdminLayout>;
 };
 
 export default function Page() {
@@ -22,11 +22,11 @@ export default function Page() {
   const [searchQuery, setSearchQuery] = useDebouncedState<string | undefined>(undefined, 500);
 
   const {
-    data: dataMeeting,
-    isLoading: isLoadingMeeting,
-    mutate: reloadMeeting,
-    total: totalMeeting,
-  } = ProjectManagerMeetingRepository.hooks.useListMeeting({
+    data: dataDocument,
+    isLoading: isLoadingDocument,
+    mutate: reloadDocument,
+    total: totalDocument,
+  } = ProjectManagerDocumentRepository.hooks.useListDocument({
     page: activePagination,
     pageSize: parseInt(sizePagination),
     name: searchQuery,
@@ -43,32 +43,32 @@ export default function Page() {
   };
 
   const onAddButton = () => {
-    push('meeting/form');
+    push('document/form');
   };
 
   const onEditButton = (id: string) => {
     push({
-      pathname: 'meeting/form',
+      pathname: 'document/form',
       query: { id, action: 'edit' },
     });
   };
 
   const onDeleteHandler = async (id: string) => {
     try {
-      const result = await ProjectManagerMeetingRepository.api.delete(id);
+      const result = await ProjectManagerDocumentRepository.api.delete(id);
       notifications.show({
-        title: 'Success',
         message: result.message,
         color: 'green',
+        title: 'Success',
       });
 
-      reloadMeeting();
+      reloadDocument();
     } catch (error) {
       const message = getErrorMessageAxios(error);
       notifications.show({
-        title: 'Error',
-        message,
+        message: message,
         color: 'red',
+        title: 'Error',
       });
     }
   };
@@ -84,9 +84,7 @@ export default function Page() {
       confirmProps: {
         color: 'red',
       },
-      onConfirm: () => {
-        onDeleteHandler(id);
-      },
+      onConfirm: () => onDeleteHandler(id),
       onCancel: () => {
         alert('Cancel');
       },
@@ -133,7 +131,7 @@ export default function Page() {
             </Grid.Col>
           </Grid>
           <Stack gap={'md'} id="table">
-            <LoadingOverlay visible={isLoadingMeeting} />
+            <LoadingOverlay visible={isLoadingDocument} />
             <Table.ScrollContainer minWidth={500}>
               <Table verticalSpacing={'md'}>
                 <Table.Thead>
@@ -142,31 +140,33 @@ export default function Page() {
                     <Table.Th>CLIENT</Table.Th>
                     <Table.Th>PROJECT</Table.Th>
                     <Table.Th>NAME</Table.Th>
-                    <Table.Th>START DATE</Table.Th>
-                    <Table.Th>END DATE</Table.Th>
-                    <Table.Th>METHOD</Table.Th>
-                    <Table.Th>LINK</Table.Th>
+                    <Table.Th>FILE</Table.Th>
                     <Table.Th>STATUS</Table.Th>
                     <Table.Th>KONTROL</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <tbody>
-                  {dataMeeting?.map((item, index) => {
+                  {dataDocument?.map((item, index) => {
+                    const isHaveFile = item.file.length > 0 && item.file !== '';
                     return (
                       <Table.Tr key={item.id}>
-                        <Table.Td>{`${index + 1}`}</Table.Td>
+                        <Table.Td>{index + 1}</Table.Td>
                         <Table.Td>{item.Project.ProjectClient.name}</Table.Td>
                         <Table.Td>{item.Project.name}</Table.Td>
                         <Table.Td>{item.name}</Table.Td>
-                        <Table.Td>{readableDate(item.startDate)}</Table.Td>
-                        <Table.Td>{readableDate(item.endDate)}</Table.Td>
-                        <Table.Td>{item.method}</Table.Td>
-                        <Table.Td>
-                          <Link href={item.link} target="_blank">
-                            {item.link}
-                          </Link>
-                        </Table.Td>
                         <Table.Td>{item.status}</Table.Td>
+                        <Table.Td>
+                          {!isHaveFile && ''}
+                          {isHaveFile && (
+                            <ActionIcon
+                              variant="outline"
+                              color="blue"
+                              onClick={() => window.open(`${baseFileDocumentURL}/${item.file}`)}
+                            >
+                              <IconFile3d stroke={1.5} />
+                            </ActionIcon>
+                          )}
+                        </Table.Td>
                         <Table.Td>
                           <Group>
                             <Button variant="outline" size="xs" color="blue" onClick={() => onEditButton(`${item.id}`)}>
@@ -189,7 +189,7 @@ export default function Page() {
               </Table>
             </Table.ScrollContainer>
             <PaginationComponent
-              total={totalMeeting || 0}
+              total={totalDocument || 0}
               activePagination={activePagination}
               paginationSize={sizePagination}
               onChangePagination={setPagination}

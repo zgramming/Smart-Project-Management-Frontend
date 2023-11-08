@@ -21,7 +21,7 @@ const url = {
 
 const hooks = {
   useListMeeting({ page = 1, pageSize = 100, name, projectId, method }: UseListMeetingProps) {
-    let uri = `${url.base}?page=${page}&pageSize=${pageSize}`;
+    let uri = `${url.base}?page=${page}&limit=${pageSize}`;
 
     if (name && name.length > 0) {
       uri += `&name=${name}`;

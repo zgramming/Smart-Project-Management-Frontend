@@ -28,7 +28,7 @@ const hooks = {
     };
   },
   useListClient({ page = 1, pageSize = 100, name }: UseListClientProps) {
-    let uri = `${url.base}?page=${page}&pageSize=${pageSize}`;
+    let uri = `${url.base}?page=${page}&limit=${pageSize}`;
 
     if (name && name.length > 0) {
       uri += `&name=${name}`;

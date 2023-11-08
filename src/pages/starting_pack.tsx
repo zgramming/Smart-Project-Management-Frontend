@@ -3,7 +3,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import { dummyModul } from '@/utils/dummy_data';
 import { Button, Card, Flex, Grid, Group, Modal, ScrollArea, Select, Stack, Table, TextInput } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import { useDisclosure } from '@mantine/hooks';
+import { useDebouncedState, useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconCalendar, IconFilter, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
@@ -17,7 +17,7 @@ export default function Page() {
   const { push } = useRouter();
   const [activePagination, setPagination] = useState(1);
   const [sizePagination, setSizePagination] = useState<PaginationSize>('10');
-  const [searchQuery, setSearchQuery] = useState<string | undefined>();
+  const [searchQuery, setSearchQuery] = useDebouncedState<string | undefined>(undefined, 500);
   const [isModalFilterOpen, { open: openModalFilter, close: closeModalFilter }] = useDisclosure(false);
 
   const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +81,7 @@ export default function Page() {
                 <TextInput
                   placeholder="Cari sesuatu..."
                   rightSection={<IconSearch />}
-                  value={searchQuery}
+                  defaultValue={searchQuery}
                   onChange={onChangeSearch}
                 />
                 <Button leftSection={<IconFilter size="1rem" />} variant="outline" onClick={openModalFilter}>

@@ -1,12 +1,12 @@
+import CardDashboard from '@/components/dashboard/CardDashboard';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { OwnerRepository } from '@/features/owner/owner.repository';
 import useBreakpoint from '@/hooks/useBreakpoint';
-import { ActionIcon, Button, Card, Group, LoadingOverlay, Stack } from '@mantine/core';
+import { Button, Card, Group, LoadingOverlay, Stack } from '@mantine/core';
 import { YearPickerInput } from '@mantine/dates';
 import {
   IconBrandZoom,
   IconBulb,
-  IconDotsVertical,
   IconDownload,
   IconFile,
   IconSubtask,
@@ -14,37 +14,11 @@ import {
   IconUserExclamation,
   IconUserSquareRounded,
 } from '@tabler/icons-react';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 Page.getLayout = function getLayout(page: any) {
   return <AdminLayout title="Dashboard">{page}</AdminLayout>;
-};
-
-interface CardDashboardProps {
-  icon: ReactNode;
-  title: string;
-  total: number;
-  onClickDetail?: () => void;
-}
-
-const CardDashboard = ({ icon, title, total, onClickDetail }: CardDashboardProps) => {
-  return (
-    <Card shadow="sm" padding="lg" radius={'lg'}>
-      <Stack gap={'md'}>
-        <div className="flex flex-row items-center justify-between">
-          {icon ? icon : <IconUserSquareRounded size={32} />}
-          <ActionIcon variant="subtle" color="black" radius="xl" onClick={onClickDetail}>
-            <IconDotsVertical size={20} />
-          </ActionIcon>
-        </div>
-        <Stack gap={'md'}>
-          <div className=" text-center font-bold text-4xl">{total}</div>
-          <div className="text-sm font-semibold">{title}</div>
-        </Stack>
-      </Stack>
-    </Card>
-  );
 };
 
 export default function Page() {
@@ -77,6 +51,7 @@ export default function Page() {
             <YearPickerInput placeholder="Pick date" value={date} onChange={(value) => setDate(value as Date)} />
           </Group>
         </Card>
+
         <div
           className="
       grid grid-cols-1 gap-4 

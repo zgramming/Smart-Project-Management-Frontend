@@ -68,7 +68,7 @@ export default function Page() {
     page: 1,
     pageSize: 1000,
   });
-  const { data: users } = UserRepository.hooks.useListUser();
+  const { data: users } = UserRepository.hooks.useOnlyDeveloperAndProjectManagerRole();
 
   const onSubmit = async (values: any) => {
     try {

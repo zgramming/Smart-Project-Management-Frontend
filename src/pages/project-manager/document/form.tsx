@@ -1,7 +1,7 @@
 import ContainerInputFileActionIcon from '@/components/ContainerInputFileActionIcon';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerDocumentRepository } from '@/features/project-manager/document/project-manager-document.repository';
-import { ProjectManagerProjectRepository } from '@/features/project-manager/project/project-manager-project.repository';
+import { ProjectDocumentRepository } from '@/features/common/project-document/project-document.repository';
+import { ProjectRepository } from '@/features/common/project/project.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import {
   Stack,
@@ -69,10 +69,10 @@ export default function Page() {
 
   const { setFieldValue } = form;
 
-  const { data: dataDocument, isLoading: isLoadingDocument } = ProjectManagerDocumentRepository.hooks.useById(
+  const { data: dataDocument, isLoading: isLoadingDocument } = ProjectDocumentRepository.hooks.useById(
     id as string | undefined,
   );
-  const { data: dataProject } = ProjectManagerProjectRepository.hooks.useListProject({
+  const { data: dataProject } = ProjectRepository.hooks.useListProject({
     page: 1,
     pageSize: 1000,
   });
@@ -91,7 +91,7 @@ export default function Page() {
         formData.append('status', status);
         if (file) formData.append('file', file);
 
-        const result = await ProjectManagerDocumentRepository.api.update(id as string, formData);
+        const result = await ProjectDocumentRepository.api.update(id as string, formData);
         notifications.show({
           title: 'Success',
           color: 'green',
@@ -106,7 +106,7 @@ export default function Page() {
         formData.append('file', file);
         formData.append('status', status);
 
-        const result = await ProjectManagerDocumentRepository.api.create(formData);
+        const result = await ProjectDocumentRepository.api.create(formData);
         notifications.show({
           title: 'Success',
           color: 'green',

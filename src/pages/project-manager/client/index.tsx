@@ -1,6 +1,6 @@
 import PaginationComponent, { PaginationSize } from '@/components/PaginationComponent';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerClientRepository } from '@/features/project-manager/client/project-manager-client.repository';
+import { ProjectClientRepository } from '@/features/common/project-client/project-client.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import { Button, Card, Flex, Grid, Group, LoadingOverlay, Stack, Table, TextInput } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
@@ -25,7 +25,7 @@ export default function Page() {
     total: totalClients,
     isLoading: isLoadingClients,
     mutate: reloadClients,
-  } = ProjectManagerClientRepository.hooks.useListClient({
+  } = ProjectClientRepository.hooks.useListClient({
     page: activePagination,
     pageSize: parseInt(sizePagination),
     name: searchQuery,
@@ -54,7 +54,7 @@ export default function Page() {
 
   const onDeleteHandler = async (id: string) => {
     try {
-      const result = await ProjectManagerClientRepository.api.delete(id);
+      const result = await ProjectClientRepository.api.delete(id);
       notifications.show({
         title: 'Success',
         color: 'green',

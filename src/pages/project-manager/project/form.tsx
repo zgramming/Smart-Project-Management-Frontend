@@ -1,6 +1,6 @@
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerClientRepository } from '@/features/project-manager/client/project-manager-client.repository';
-import { ProjectManagerProjectRepository } from '@/features/project-manager/project/project-manager-project.repository';
+import { ProjectClientRepository } from '@/features/common/project-client/project-client.repository';
+import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import { Stack, Card, TextInput, Group, Button, Radio, MultiSelect, Select, LoadingOverlay } from '@mantine/core';
@@ -80,11 +80,9 @@ export default function Page() {
   const isEdit = action === 'edit';
   const { setFieldValue } = form;
 
-  const { data: project, isLoading: isLoadingProject } = ProjectManagerProjectRepository.hooks.useById(
-    id as string | undefined,
-  );
+  const { data: project, isLoading: isLoadingProject } = ProjectRepository.hooks.useById(id as string | undefined);
   const { data: users } = UserRepository.hooks.useOnlyDeveloperAndProjectManagerRole();
-  const { data: clients } = ProjectManagerClientRepository.hooks.useListClient({
+  const { data: clients } = ProjectClientRepository.hooks.useListClient({
     page: 1,
     pageSize: 1000,
   });
@@ -103,14 +101,14 @@ export default function Page() {
         status: values.status,
       };
       if (isEdit) {
-        const result = await ProjectManagerProjectRepository.api.update(id as string, body);
+        const result = await ProjectRepository.api.update(id as string, body);
         notifications.show({
           title: 'Success',
           color: 'green',
           message: result.message,
         });
       } else {
-        const result = await ProjectManagerProjectRepository.api.create(body);
+        const result = await ProjectRepository.api.create(body);
         notifications.show({
           title: 'Success',
           color: 'green',

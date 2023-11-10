@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 Page.getLayout = function getLayout(page: any) {
-  return <AdminLayout title="Data Badan Usaha">{page}</AdminLayout>;
+  return <AdminLayout title="Developer - Meeting">{page}</AdminLayout>;
 };
 
 export default function Page() {

@@ -1,6 +1,6 @@
 import PaginationComponent, { PaginationSize } from '@/components/PaginationComponent';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerMeetingRepository } from '@/features/project-manager/meeting/project-manager-meeting.repository';
+import { ProjectMeetingRepository } from '@/features/common/project-meeting/project-meeting.repository';
 import { getErrorMessageAxios, readableDate } from '@/utils/function';
 import { Button, Card, Flex, Grid, Group, LoadingOverlay, Stack, Table, TextInput } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
@@ -26,7 +26,7 @@ export default function Page() {
     isLoading: isLoadingMeeting,
     mutate: reloadMeeting,
     total: totalMeeting,
-  } = ProjectManagerMeetingRepository.hooks.useListMeeting({
+  } = ProjectMeetingRepository.hooks.useListMeeting({
     page: activePagination,
     pageSize: parseInt(sizePagination),
     name: searchQuery,
@@ -55,7 +55,7 @@ export default function Page() {
 
   const onDeleteHandler = async (id: string) => {
     try {
-      const result = await ProjectManagerMeetingRepository.api.delete(id);
+      const result = await ProjectMeetingRepository.api.delete(id);
       notifications.show({
         title: 'Success',
         message: result.message,

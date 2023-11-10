@@ -1,6 +1,6 @@
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerMeetingRepository } from '@/features/project-manager/meeting/project-manager-meeting.repository';
-import { ProjectManagerProjectRepository } from '@/features/project-manager/project/project-manager-project.repository';
+import { ProjectMeetingRepository } from '@/features/common/project-meeting/project-meeting.repository';
+import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import {
@@ -44,10 +44,10 @@ export default function Page() {
   const { setFieldValue } = form;
   const isEdit = action === 'edit';
 
-  const { data: dataMeeting, isLoading: isLoadingMeeting } = ProjectManagerMeetingRepository.hooks.useById(
+  const { data: dataMeeting, isLoading: isLoadingMeeting } = ProjectMeetingRepository.hooks.useById(
     id as string | undefined,
   );
-  const { data: dataProject } = ProjectManagerProjectRepository.hooks.useListProject({
+  const { data: dataProject } = ProjectRepository.hooks.useListProject({
     page: 1,
     pageSize: 1000,
   });
@@ -70,14 +70,14 @@ export default function Page() {
       };
 
       if (isEdit) {
-        const result = await ProjectManagerMeetingRepository.api.update(id as string, body);
+        const result = await ProjectMeetingRepository.api.update(id as string, body);
         notifications.show({
           title: 'Success',
           message: result.message,
           color: 'blue',
         });
       } else {
-        const result = await ProjectManagerMeetingRepository.api.create(body);
+        const result = await ProjectMeetingRepository.api.create(body);
 
         notifications.show({
           title: 'Success',

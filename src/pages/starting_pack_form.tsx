@@ -241,6 +241,9 @@ export default function Page() {
             </Grid>
           </Card>
           <Card withBorder>
+            <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>
+              Card Section
+            </Card.Section>
             <Grid gutter={'xl'} grow>
               <Grid.Col
                 span={{

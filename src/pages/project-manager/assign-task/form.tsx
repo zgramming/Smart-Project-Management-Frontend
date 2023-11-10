@@ -1,6 +1,6 @@
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerProjectRepository } from '@/features/project-manager/project/project-manager-project.repository';
-import { ProjectManagerTaskRepository } from '@/features/project-manager/task/project-manager-task.repository';
+import { ProjectTaskRepository } from '@/features/common/project-task/project-task.repository';
+import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import { Stack, Card, Group, Button, LoadingOverlay, Select, TextInput, Textarea, Radio } from '@mantine/core';
@@ -63,10 +63,8 @@ export default function Page() {
 
   const { setFieldValue } = form;
 
-  const { data: dataTask, isLoading: isLoadingTask } = ProjectManagerTaskRepository.hooks.useById(
-    id as string | undefined,
-  );
-  const { data: dataProject } = ProjectManagerProjectRepository.hooks.useListProject({
+  const { data: dataTask, isLoading: isLoadingTask } = ProjectTaskRepository.hooks.useById(id as string | undefined);
+  const { data: dataProject } = ProjectRepository.hooks.useListProject({
     page: 1,
     pageSize: 1000,
   });
@@ -77,7 +75,7 @@ export default function Page() {
       const { project_id, user_id, name, description, start_date, end_date, difficulty, status } = values;
 
       if (isEdit) {
-        const result = await ProjectManagerTaskRepository.api.update(id as string, {
+        const result = await ProjectTaskRepository.api.update(id as string, {
           projectId: parseInt(project_id),
           userId: parseInt(user_id),
           endDate: end_date,
@@ -94,7 +92,7 @@ export default function Page() {
           color: 'green',
         });
       } else {
-        const result = await ProjectManagerTaskRepository.api.create({
+        const result = await ProjectTaskRepository.api.create({
           projectId: parseInt(project_id),
           userId: parseInt(user_id),
           endDate: end_date,

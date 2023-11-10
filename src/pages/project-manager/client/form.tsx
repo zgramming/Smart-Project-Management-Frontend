@@ -1,5 +1,5 @@
 import AdminLayout from '@/components/layout/AdminLayout';
-import { ProjectManagerClientRepository } from '@/features/project-manager/client/project-manager-client.repository';
+import { ProjectClientRepository } from '@/features/common/project-client/project-client.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import { Stack, Card, TextInput, Textarea, Group, Button, LoadingOverlay } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -47,19 +47,19 @@ export default function Page() {
     data: client,
     isLoading: isLoadingClient,
     mutate: reloadClient,
-  } = ProjectManagerClientRepository.hooks.useById(id as string | undefined);
+  } = ProjectClientRepository.hooks.useById(id as string | undefined);
 
   const onSubmit = async (values: any) => {
     try {
       if (isEdit) {
-        const result = await ProjectManagerClientRepository.api.update(id as string, values);
+        const result = await ProjectClientRepository.api.update(id as string, values);
         notifications.show({
           title: 'Success',
           color: 'green',
           message: result.message,
         });
       } else {
-        const result = await ProjectManagerClientRepository.api.create(values);
+        const result = await ProjectClientRepository.api.create(values);
         notifications.show({
           title: 'Success',
           color: 'green',

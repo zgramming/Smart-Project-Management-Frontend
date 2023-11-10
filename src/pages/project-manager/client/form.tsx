@@ -1,11 +1,12 @@
 import AdminLayout from '@/components/layout/AdminLayout';
+import { AuthenticationContext } from '@/context/AuthenticationContext';
 import { ProjectClientRepository } from '@/features/common/project-client/project-client.repository';
 import { getErrorMessageAxios } from '@/utils/function';
 import { Stack, Card, TextInput, Textarea, Group, Button, LoadingOverlay } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 
 Page.getLayout = (page: ReactNode) => <AdminLayout title={'Form Client'}>{page}</AdminLayout>;
 
@@ -38,6 +39,7 @@ export default function Page() {
     },
   });
 
+  const authCtx = useContext(AuthenticationContext);
   const { back, query, isReady } = useRouter();
   const { id, action } = query;
   const isEdit = action === 'edit';
@@ -52,14 +54,21 @@ export default function Page() {
   const onSubmit = async (values: any) => {
     try {
       if (isEdit) {
-        const result = await ProjectClientRepository.api.update(id as string, values);
+        const body = {
+          ...values,
+        };
+        const result = await ProjectClientRepository.api.update(id as string, body);
         notifications.show({
           title: 'Success',
           color: 'green',
           message: result.message,
         });
       } else {
-        const result = await ProjectClientRepository.api.create(values);
+        const body = {
+          ...values,
+          createdBy: authCtx.jwtPayload?.sub,
+        };
+        const result = await ProjectClientRepository.api.create(body);
         notifications.show({
           title: 'Success',
           color: 'green',

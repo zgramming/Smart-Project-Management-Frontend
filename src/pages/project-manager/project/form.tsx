@@ -1,4 +1,5 @@
 import AdminLayout from '@/components/layout/AdminLayout';
+import { AuthenticationContext } from '@/context/AuthenticationContext';
 import { ProjectClientRepository } from '@/features/common/project-client/project-client.repository';
 import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
@@ -9,11 +10,12 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCalendar } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 
 Page.getLayout = (page: ReactNode) => <AdminLayout title={'Form Project'}>{page}</AdminLayout>;
 
 export default function Page() {
+  const authCtx = useContext(AuthenticationContext);
   const form = useForm({
     initialValues: {
       client_id: '',
@@ -90,7 +92,10 @@ export default function Page() {
   const onSubmit = async (values: any) => {
     try {
       console.log({ values });
-      const members = (values.members as Array<string>).map((item) => ({ userId: parseInt(item) }));
+      const members = (values.members as Array<string>).map((item) => ({
+        userId: parseInt(item),
+        createdBy: authCtx.jwtPayload?.sub || 0,
+      }));
       const body = {
         clientId: values.client_id,
         name: values.name,
@@ -99,7 +104,9 @@ export default function Page() {
         endDate: values.end_date,
         members: members,
         status: values.status,
+        createdBy: authCtx.jwtPayload?.sub || 0,
       };
+
       if (isEdit) {
         const result = await ProjectRepository.api.update(id as string, body);
         notifications.show({

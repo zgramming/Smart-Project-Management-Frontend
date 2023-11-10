@@ -1,4 +1,5 @@
 import AdminLayout from '@/components/layout/AdminLayout';
+import { AuthenticationContext } from '@/context/AuthenticationContext';
 import { ProjectMeetingRepository } from '@/features/common/project-meeting/project-meeting.repository';
 import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
@@ -19,12 +20,14 @@ import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 
 Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Meeting">{page}</AdminLayout>;
 
 export default function Page() {
+  const authCtx = useContext(AuthenticationContext);
   const form = useForm({
     initialValues: {
       project_id: '',
@@ -37,7 +40,56 @@ export default function Page() {
       status: 'ACTIVE',
       members: Array<any>(),
     },
-    validate: {},
+    validate: {
+      project_id: (value) => {
+        if (!value) {
+          return 'Project is required';
+        }
+        return null;
+      },
+      name: (value) => {
+        if (!value) {
+          return 'Name is required';
+        }
+        return null;
+      },
+      start_date: (value) => {
+        if (!value) {
+          return 'Start Date is required';
+        }
+        return null;
+      },
+      end_date: (value) => {
+        if (!value) {
+          return 'End Date is required';
+        }
+        return null;
+      },
+      status: (value) => {
+        if (!value) {
+          return 'Status is required';
+        }
+        return null;
+      },
+      link: (value, values) => {
+        if (values.method === 'ONLINE' && !value) {
+          return 'Link is required';
+        }
+        return null;
+      },
+      method: (value) => {
+        if (!value) {
+          return 'Method is required';
+        }
+        return null;
+      },
+      members: (value) => {
+        if (!value) {
+          return 'Members is required';
+        }
+        return null;
+      },
+    },
   });
   const { back, query, isReady } = useRouter();
   const { id, action } = query;
@@ -57,19 +109,16 @@ export default function Page() {
     try {
       console.log(values);
       const members = (values.members as Array<string>).map((item) => ({ userId: parseInt(item) }));
-      const body = {
-        projectId: parseInt(values.project_id),
-        name: values.name,
-        description: values.description,
-        startDate: values.start_date,
-        endDate: values.end_date,
-        link: values.link,
-        method: values.method,
-        status: values.status,
-        members,
-      };
-
+      const startDate = dayjs(values.start_date);
+      const endDate = dayjs(values.end_date);
       if (isEdit) {
+        const body = {
+          ...values,
+          projectId: parseInt(values.project_id),
+          startDate: startDate,
+          endDate: endDate,
+          members,
+        };
         const result = await ProjectMeetingRepository.api.update(id as string, body);
         notifications.show({
           title: 'Success',
@@ -77,6 +126,14 @@ export default function Page() {
           color: 'blue',
         });
       } else {
+        const body = {
+          ...values,
+          projectId: parseInt(values.project_id),
+          startDate: startDate,
+          endDate: endDate,
+          createdBy: authCtx.jwtPayload?.sub || 0,
+          members,
+        };
         const result = await ProjectMeetingRepository.api.create(body);
 
         notifications.show({

@@ -1,5 +1,6 @@
 import ContainerInputFileActionIcon from '@/components/ContainerInputFileActionIcon';
 import AdminLayout from '@/components/layout/AdminLayout';
+import { AuthenticationContext } from '@/context/AuthenticationContext';
 import { ProjectDocumentRepository } from '@/features/common/project-document/project-document.repository';
 import { ProjectRepository } from '@/features/common/project/project.repository';
 import { getErrorMessageAxios } from '@/utils/function';
@@ -19,15 +20,12 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconUpload } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 
 Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;
 
 export default function Page() {
-  const { back, query, isReady } = useRouter();
-  const { id, action } = query;
-  const isEdit = action === 'edit';
-
+  const authCtx = useContext(AuthenticationContext);
   const form = useForm({
     initialValues: {
       project_id: '',
@@ -67,6 +65,9 @@ export default function Page() {
     },
   });
 
+  const { back, query, isReady } = useRouter();
+  const { id, action } = query;
+  const isEdit = action === 'edit';
   const { setFieldValue } = form;
 
   const { data: dataDocument, isLoading: isLoadingDocument } = ProjectDocumentRepository.hooks.useById(
@@ -105,6 +106,7 @@ export default function Page() {
         formData.append('description', description);
         formData.append('file', file);
         formData.append('status', status);
+        formData.append('createdBy', `${authCtx.jwtPayload?.sub}`);
 
         const result = await ProjectDocumentRepository.api.create(formData);
         notifications.show({

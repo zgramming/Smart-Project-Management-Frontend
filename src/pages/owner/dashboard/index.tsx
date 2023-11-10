@@ -1,11 +1,13 @@
 import AdminLayout from '@/components/layout/AdminLayout';
 import { OwnerRepository } from '@/features/owner/owner.repository';
 import useBreakpoint from '@/hooks/useBreakpoint';
-import { ActionIcon, Card, LoadingOverlay, Stack } from '@mantine/core';
+import { ActionIcon, Button, Card, Group, LoadingOverlay, Stack } from '@mantine/core';
+import { YearPickerInput } from '@mantine/dates';
 import {
   IconBrandZoom,
   IconBulb,
   IconDotsVertical,
+  IconDownload,
   IconFile,
   IconSubtask,
   IconUserCode,
@@ -47,8 +49,8 @@ const CardDashboard = ({ icon, title, total, onClickDetail }: CardDashboardProps
 
 export default function Page() {
   const { isMobile } = useBreakpoint();
-  const [year] = useState<number>(new Date().getFullYear());
-  const { data: dashboard, isLoading } = OwnerRepository.hooks.useResumeDashboard(year);
+  const [date, setDate] = useState<Date>(new Date());
+  const { data: dashboard, isLoading } = OwnerRepository.hooks.useResumeDashboard(date.getFullYear());
   const {
     totalTask,
     totalClient,
@@ -65,6 +67,16 @@ export default function Page() {
     <Stack gap={'md'}>
       <LoadingOverlay visible={isLoading} />
       <Stack gap={'lg'}>
+        <Card padding={'md'} radius={'lg'} shadow="sm">
+          <Group>
+            <div className="grow">
+              <Button variant="outline" rightSection={<IconDownload size={14} />}>
+                Download Report
+              </Button>
+            </div>
+            <YearPickerInput placeholder="Pick date" value={date} onChange={(value) => setDate(value as Date)} />
+          </Group>
+        </Card>
         <div
           className="
       grid grid-cols-1 gap-4 

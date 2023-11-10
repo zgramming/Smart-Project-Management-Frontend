@@ -3,6 +3,7 @@ export const baseApiURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}`;
 export const baseFileURL = `${baseUrl}/uploads`;
 export const baseFileDocumentURL = `${baseFileURL}/document`;
 export const TOKEN_KEY = 'token';
+export const JWT_PAYLOAD_KEY = 'jwt_payload_key';
 
 export const availableAccessAction = ['view', 'create', 'update', 'delete', 'print', 'export', 'import', 'approve'];
 

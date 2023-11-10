@@ -9,4 +9,5 @@ export interface ProjectTaskCreateDTO {
   endDate: Date;
   degreeOfDifficulty?: DegreeOfDifficultyEnum;
   status?: ProjectTaskStatusEnum;
+  createdBy: number;
 }

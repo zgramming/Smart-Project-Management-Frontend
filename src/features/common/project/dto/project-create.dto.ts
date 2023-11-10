@@ -2,6 +2,7 @@ import { ActiveStatusEnum, ProjectStatusEnum } from '@/utils/enum';
 
 interface ProjectMember {
   userId: number;
+  createdBy: number;
   status?: ActiveStatusEnum;
 }
 
@@ -12,5 +13,6 @@ export interface ProjectCreateDTO {
   startDate: Date;
   endDate: Date;
   status: ProjectStatusEnum;
+  createdBy: number;
   members: ProjectMember[];
 }

@@ -13,5 +13,6 @@ export interface ProjectMeetingCreateDTO {
   method: ProjectMeetingMethodEnum;
   link: string;
   status: ActiveStatusEnum;
+  createdBy: number;
   members: ProjectMember[];
 }

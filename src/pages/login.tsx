@@ -12,7 +12,7 @@ import { AuthenticationContext } from '@/context/AuthenticationContext';
 import { useRouter } from 'next/router';
 
 export default function Page() {
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const context = useContext(AuthenticationContext);
   const onSubmit = async (values: any) => {
     try {
@@ -20,7 +20,7 @@ export default function Page() {
 
       context.setToken(result.data.token);
 
-      push('/');
+      replace('/');
     } catch (e) {
       const message = getErrorMessageAxios(e);
       notifications.show({

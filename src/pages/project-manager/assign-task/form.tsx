@@ -1,4 +1,5 @@
 import AdminLayout from '@/components/layout/AdminLayout';
+import { AuthenticationContext } from '@/context/AuthenticationContext';
 import { ProjectTaskRepository } from '@/features/common/project-task/project-task.repository';
 import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
@@ -9,15 +10,12 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCalendar } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 
 Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Task">{page}</AdminLayout>;
 
 export default function Page() {
-  const { back, query, isReady } = useRouter();
-  const { id, action } = query;
-  const isEdit = action === 'edit';
-
+  const authCtx = useContext(AuthenticationContext);
   const form = useForm({
     initialValues: {
       user_id: '',
@@ -60,7 +58,9 @@ export default function Page() {
       },
     },
   });
-
+  const { back, query, isReady } = useRouter();
+  const { id, action } = query;
+  const isEdit = action === 'edit';
   const { setFieldValue } = form;
 
   const { data: dataTask, isLoading: isLoadingTask } = ProjectTaskRepository.hooks.useById(id as string | undefined);
@@ -101,6 +101,7 @@ export default function Page() {
           description,
           degreeOfDifficulty: difficulty,
           status,
+          createdBy: authCtx.jwtPayload?.sub || 0,
         });
 
         notifications.show({

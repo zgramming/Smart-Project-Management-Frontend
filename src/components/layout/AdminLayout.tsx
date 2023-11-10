@@ -238,7 +238,13 @@ export default function AdminLayout({ children, breadcrumbsOverride, title }: Ad
             backgroundColor: '#F8F9FB',
           }}
         >
-          <Stack gap={'md'} p={'md'}>
+          <Stack
+            gap={'md'}
+            p={{
+              xs: 0,
+              lg: 'md',
+            }}
+          >
             <Box>
               <Stack gap={'xs'}>
                 <div className="font-medium text-3xl">{title || 'Default Title'}</div>

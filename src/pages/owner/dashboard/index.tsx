@@ -160,10 +160,10 @@ export default function Page() {
             <BarChart
               data={statisticDeveloper}
               margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                top: 0,
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />

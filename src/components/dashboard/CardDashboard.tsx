@@ -11,7 +11,7 @@ interface CardDashboardProps {
 
 const CardDashboard = ({ icon, title, total, onClickDetail }: CardDashboardProps) => {
   return (
-    <Card shadow="sm" padding="lg" radius={'lg'}>
+    <Card shadow="sm" padding="lg" radius={'lg'} withBorder>
       <Stack gap={'md'}>
         <div className="flex flex-row items-center justify-between">
           {icon ? icon : <IconUserSquareRounded size={32} />}

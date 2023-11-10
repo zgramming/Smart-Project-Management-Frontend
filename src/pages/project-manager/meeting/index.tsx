@@ -158,8 +158,8 @@ export default function Page() {
                         <Table.Td>{item.Project.ProjectClient.name}</Table.Td>
                         <Table.Td>{item.Project.name}</Table.Td>
                         <Table.Td>{item.name}</Table.Td>
-                        <Table.Td>{readableDate(item.startDate)}</Table.Td>
-                        <Table.Td>{readableDate(item.endDate)}</Table.Td>
+                        <Table.Td>{readableDate(item.startDate, 'DD MMMM YYYY - H:m')}</Table.Td>
+                        <Table.Td>{readableDate(item.endDate, 'DD MMMM YYYY - H:m')}</Table.Td>
                         <Table.Td>{item.method}</Table.Td>
                         <Table.Td>
                           <Link href={item.link} target="_blank">

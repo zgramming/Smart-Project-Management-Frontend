@@ -2,8 +2,11 @@ import CardDashboard from '@/components/dashboard/CardDashboard';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { OwnerRepository } from '@/features/owner/owner.repository';
 import useBreakpoint from '@/hooks/useBreakpoint';
+import { baseUrl } from '@/utils/constant';
+import { getErrorMessageAxios } from '@/utils/function';
 import { Button, Card, Group, LoadingOverlay, Stack } from '@mantine/core';
 import { YearPickerInput } from '@mantine/dates';
+import { notifications } from '@mantine/notifications';
 import {
   IconBrandZoom,
   IconBulb,
@@ -24,6 +27,7 @@ Page.getLayout = function getLayout(page: any) {
 export default function Page() {
   const { isMobile } = useBreakpoint();
   const [date, setDate] = useState<Date>(new Date());
+  const [isLoadingDownloadReport, setIsLoadingDownloadReport] = useState<boolean>(false);
   const { data: dashboard, isLoading } = OwnerRepository.hooks.useResumeDashboard(date.getFullYear());
   const {
     totalTask,
@@ -37,6 +41,30 @@ export default function Page() {
     statisticProjectManager = [],
   } = dashboard || {};
 
+  const onDownloadReport = async () => {
+    try {
+      setIsLoadingDownloadReport(true);
+
+      const { relativePath } = await OwnerRepository.api.downloadReport(date.getFullYear());
+      const path = `${baseUrl}/${relativePath}`;
+      notifications.show({
+        title: 'Success',
+        message: 'Download report success',
+        color: 'green',
+      });
+      window.open(path, '_blank');
+    } catch (error) {
+      const message = getErrorMessageAxios(error);
+      notifications.show({
+        title: 'Error',
+        message,
+        color: 'red',
+      });
+    } finally {
+      setIsLoadingDownloadReport(false);
+    }
+  };
+
   return (
     <Stack gap={'md'}>
       <LoadingOverlay visible={isLoading} />
@@ -44,7 +72,12 @@ export default function Page() {
         <Card padding={'md'} radius={'lg'} shadow="sm">
           <Group>
             <div className="grow">
-              <Button variant="outline" rightSection={<IconDownload size={14} />}>
+              <Button
+                variant="outline"
+                rightSection={<IconDownload size={14} />}
+                onClick={onDownloadReport}
+                loading={isLoadingDownloadReport}
+              >
                 Download Report
               </Button>
             </div>

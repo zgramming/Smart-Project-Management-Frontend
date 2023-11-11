@@ -1,10 +1,12 @@
 import { http } from '@/utils/http';
 import useSWR from 'swr';
 import { ProjectManagerResumeDashboardEntity } from './entities/project-manager-resume-dashboard.entity';
+import { ProjectManagerReportEntity } from './entities/project-manager-report.entity';
 
 const url = {
   base: '/project-manager',
   project: '/project',
+  report: '/project-report',
 };
 
 const hooks = {
@@ -33,7 +35,18 @@ const hooks = {
   },
 };
 
-const api = {};
+const api = {
+  downloadReport: async (year?: number) => {
+    let uri = `${url.report}/project-manager`;
+    if (year) {
+      uri += `?year=${year}`;
+    }
+
+    const result: ProjectManagerReportEntity = await http.post(uri, {}, null);
+
+    return result;
+  },
+};
 
 export const ProjectManagerDashboardRepository = {
   url,

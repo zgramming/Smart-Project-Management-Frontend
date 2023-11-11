@@ -1,9 +1,11 @@
 import CardDashboard from '@/components/dashboard/CardDashboard';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { ProjectManagerDashboardRepository } from '@/features/project-manager/dashboard/project-manager-dashboard.repository';
-import { readableDate } from '@/utils/function';
+import { baseUrl } from '@/utils/constant';
+import { getErrorMessageAxios, readableDate } from '@/utils/function';
 import { Button, Card, Grid, Group, LoadingOverlay, Stack, Table } from '@mantine/core';
 import { YearPickerInput } from '@mantine/dates';
+import { notifications } from '@mantine/notifications';
 import { IconBrandZoom, IconBulb, IconDownload, IconFile, IconSubtask } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -14,17 +16,49 @@ Page.getLayout = function getLayout(page: any) {
 
 export default function Page() {
   const [date, setDate] = useState<Date>(new Date());
+  const [isDownloadReport, setIsDownloadReport] = useState<boolean>(false);
 
   const { data: resumeDashboard, isLoading: isLoadingResumeDashboard } =
     ProjectManagerDashboardRepository.hooks.useResumeDashboard(date.getFullYear());
   const { projectsWillBeEndSoon, totalDocument, totalMeeting, totalProject, totalTask } = resumeDashboard || {};
+
+  const onDownloadReport = async () => {
+    try {
+      setIsDownloadReport(true);
+      const { relativePath } = await ProjectManagerDashboardRepository.api.downloadReport(date.getFullYear());
+
+      const path = `${baseUrl}/${relativePath}`;
+      window.open(path, '_blank');
+
+      notifications.show({
+        title: 'Success',
+        message: 'Download report success',
+        color: 'green',
+      });
+    } catch (error) {
+      const message = getErrorMessageAxios(error);
+      notifications.show({
+        title: 'Error',
+        message,
+        color: 'red',
+      });
+    } finally {
+      setIsDownloadReport(false);
+    }
+  };
+
   return (
     <Stack gap={'md'}>
       <LoadingOverlay visible={isLoadingResumeDashboard} />
       <Card padding={'md'} radius={'lg'} shadow="sm">
         <Group>
           <div className="grow">
-            <Button variant="outline" rightSection={<IconDownload size={14} />}>
+            <Button
+              variant="outline"
+              rightSection={<IconDownload size={14} />}
+              loading={isDownloadReport}
+              onClick={onDownloadReport}
+            >
               Download Report
             </Button>
           </div>

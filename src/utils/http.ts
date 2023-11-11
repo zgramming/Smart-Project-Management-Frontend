@@ -1,6 +1,4 @@
 import { appConfig } from '../config/app';
-// import {TokenUtil} from "./token";
-// import {authenticationRepository} from "../repository/authentication";
 import axios from 'axios';
 
 export const instance = axios.create({

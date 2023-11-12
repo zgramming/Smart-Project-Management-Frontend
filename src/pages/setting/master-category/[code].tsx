@@ -86,43 +86,47 @@ export default function Page() {
           </Flex>
         </Card>
         <Card withBorder>
-          <Table verticalSpacing={'md'} highlightOnHover>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Induk</th>
-                <th>Kode</th>
-                <th>Nama</th>
-                <th>Urutan</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dummyRole.map((item, index) => {
-                return (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{item.code}</td>
-                    <td>{item.code}</td>
-                    <td>{item.code}</td>
-                    <td>{index + 1}</td>
-                    <td>{item.status ? <Badge color="green">Aktif</Badge> : <Badge color="red">Tidak Aktif</Badge>}</td>
-                    <td>
-                      <Group gap={'xs'}>
-                        <Button variant="outline" size="xs" color="blue" onClick={openModal}>
-                          Edit
-                        </Button>
-                        <Button variant="outline" size="xs" color="red">
-                          Hapus
-                        </Button>
-                      </Group>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+          <Table.ScrollContainer minWidth={500}>
+            <Table verticalSpacing={'md'} highlightOnHover>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>No</Table.Th>
+                  <Table.Th>Induk</Table.Th>
+                  <Table.Th>Kode</Table.Th>
+                  <Table.Th>Nama</Table.Th>
+                  <Table.Th>Urutan</Table.Th>
+                  <Table.Th>Status</Table.Th>
+                  <Table.Th>Aksi</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <tbody>
+                {dummyRole.map((item, index) => {
+                  return (
+                    <Table.Tr key={item.id}>
+                      <Table.Td>{item.id}</Table.Td>
+                      <Table.Td>{item.code}</Table.Td>
+                      <Table.Td>{item.code}</Table.Td>
+                      <Table.Td>{item.code}</Table.Td>
+                      <Table.Td>{index + 1}</Table.Td>
+                      <Table.Td>
+                        {item.status ? <Badge color="green">Aktif</Badge> : <Badge color="red">Tidak Aktif</Badge>}
+                      </Table.Td>
+                      <Table.Td>
+                        <Group gap={'xs'}>
+                          <Button variant="outline" size="xs" color="blue" onClick={openModal}>
+                            Edit
+                          </Button>
+                          <Button variant="outline" size="xs" color="red">
+                            Hapus
+                          </Button>
+                        </Group>
+                      </Table.Td>
+                    </Table.Tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </Table.ScrollContainer>
         </Card>
       </Stack>
       {/* Form Modal Master Data */}

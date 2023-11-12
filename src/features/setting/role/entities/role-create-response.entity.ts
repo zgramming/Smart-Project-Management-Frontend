@@ -1,11 +1,10 @@
-export interface RoleEntity {
+export interface RoleCreateResponseEntity {
   message: string;
   error: boolean;
-  total: number;
-  data: Daum[];
+  data: Data;
 }
 
-interface Daum {
+interface Data {
   id: number;
   name: string;
   code: string;

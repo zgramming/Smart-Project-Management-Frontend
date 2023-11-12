@@ -1,6 +1,7 @@
 import ContainerInputFileActionIcon from '@/components/ContainerInputFileActionIcon';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { dummyModul } from '@/utils/dummy_data';
+import { getErrorMessageAxios } from '@/utils/function';
 import {
   Stack,
   Card,
@@ -17,21 +18,47 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { IconCalendar, IconUpload } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;
 
 export default function Page() {
-  const { back } = useRouter();
   const form = useForm({
     initialValues: {},
     validate: {},
   });
-  const onSubmit = (values: any) => {
-    console.log(values);
+  const { back, query, isReady } = useRouter();
+
+  const { id, action } = query;
+  const isEdit = action === 'edit';
+  const { setFieldValue } = form;
+
+  const onSubmit = async (values: any) => {
+    try {
+      console.log({
+        id,
+        values,
+        isEdit,
+        setFieldValue,
+      });
+    } catch (error) {
+      const message = getErrorMessageAxios(error);
+      notifications.show({
+        title: 'Error',
+        message,
+        color: 'red',
+      });
+    }
   };
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    return () => {};
+  }, [isReady]);
 
   return (
     <>

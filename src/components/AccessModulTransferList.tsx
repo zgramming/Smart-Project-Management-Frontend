@@ -5,7 +5,7 @@ import { useState } from 'react';
 import classes from '@cssModule/access_modul_transfer_list.module.css';
 
 export type TransferListDataType = {
-  value: string;
+  value: string ;
   label: string;
 };
 

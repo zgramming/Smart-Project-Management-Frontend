@@ -1,11 +1,10 @@
-export interface UserEntity {
+export interface UserDetailEntity {
   error: boolean;
   message: string;
-  total: number;
-  data: Datum[];
+  data: Data;
 }
 
-interface Datum {
+interface Data {
   id: number;
   name: string;
   username: string;

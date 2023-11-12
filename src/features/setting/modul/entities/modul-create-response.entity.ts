@@ -1,11 +1,10 @@
-export interface ModulEntity {
+export interface ModulCreateResponseEntity {
   error: boolean;
   message: string;
-  total: number;
-  data: Daum[];
+  data: Data;
 }
 
-interface Daum {
+interface Data {
   id: number;
   categoryModulId: number;
   name: string;

@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 Page.getLayout = function getLayout(page: any) {
-  return <AdminLayout title="Data Badan Usaha">{page}</AdminLayout>;
+  return <AdminLayout title="User">{page}</AdminLayout>;
 };
 
 export default function Page() {

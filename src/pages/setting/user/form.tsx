@@ -8,7 +8,7 @@ import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect } from 'react';
 
-Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;
+Page.getLayout = (page: ReactNode) => <AdminLayout title="Form User">{page}</AdminLayout>;
 
 export default function Page() {
   const { back, query, isReady } = useRouter();

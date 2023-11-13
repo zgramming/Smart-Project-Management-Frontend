@@ -5,7 +5,7 @@ export const baseFileDocumentURL = `${baseFileURL}/document`;
 export const TOKEN_KEY = 'token';
 export const JWT_PAYLOAD_KEY = 'jwt_payload_key';
 
-export const availableAccessAction = ['view', 'create', 'update', 'delete', 'print', 'export', 'import', 'approve'];
+export const availableAccessAction = ['VIEW', 'CREATE', 'UPDATE', 'DELETE', 'PRINT', 'EXPORT', 'IMPORT', 'APPROVE'];
 
 // This breakpoint follow tailwindcss breakpoint https://tailwindcss.com/docs/breakpoints
 export const breakpoint = {

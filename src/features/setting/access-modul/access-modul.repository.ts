@@ -3,6 +3,7 @@ import { AccessModulSelectedUnselectedAccessEntity } from './entities/access-mod
 import { http } from '@/utils/http';
 import { AccessModulUpdateAccessDTO } from './dto/access-modul-update-access.dto';
 import { AccessModulUpdateAccessResponseEntity } from './entities/access-modul-update-access-response.entity';
+import { AccessModulByRoleEntity } from './entities/access-modul-by-role.entity';
 
 const url = {
   base: '/setting/access-modul',
@@ -18,6 +19,25 @@ const hooks = {
       isValidating,
       mutate,
     } = useSWR<AccessModulSelectedUnselectedAccessEntity>(uri, http.fetcher);
+
+    return {
+      data: response?.data,
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    };
+  },
+
+  useByRole: (roleId?: string) => {
+    const uri = roleId ? `${url.base}/role/${roleId}` : null;
+    const {
+      data: response,
+      error,
+      isLoading,
+      isValidating,
+      mutate,
+    } = useSWR<AccessModulByRoleEntity>(uri, http.fetcher);
 
     return {
       data: response?.data,

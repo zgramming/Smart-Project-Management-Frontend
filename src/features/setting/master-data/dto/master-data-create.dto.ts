@@ -1,18 +1,12 @@
-export interface MasterDataDetailEntity {
-  error: boolean;
-  message: string;
-  data: Data;
-}
+import { ActiveStatusEnum } from '@/utils/enum';
 
-interface Data {
-  id: number;
-  parentMasterDataId: any;
-  masterCategoryId: number;
+export interface MasterDataCreateDTO {
+  parentMasterDataId?: number;
   masterCategoryCode: string;
   name: string;
   code: string;
   description?: string;
-  status: string;
+  status?: ActiveStatusEnum;
   parameter1_key?: string;
   parameter1_value?: string;
   parameter2_key?: string;
@@ -21,6 +15,4 @@ interface Data {
   parameter3_value?: string;
   parameter4_key?: string;
   parameter4_value?: string;
-  createdAt: string;
-  updatedAt: string;
 }

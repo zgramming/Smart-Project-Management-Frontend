@@ -15,6 +15,7 @@ interface Daum {
   endDate: string;
   degreeOfDifficulty: string;
   status: string;
+  approveStatus: string;
   createdAt: string;
   updatedAt: string;
   Project: Project;

@@ -144,6 +144,7 @@ export default function Page() {
                     <Table.Th>END DATE</Table.Th>
                     <Table.Th>DIFFICULTY</Table.Th>
                     <Table.Th>STATUS</Table.Th>
+                    <Table.Th>APPROVE</Table.Th>
                     <Table.Th>CREATE DATE</Table.Th>
                     <Table.Th>UPDATE DATE</Table.Th>
                     <Table.Th>KONTROL</Table.Th>
@@ -162,6 +163,7 @@ export default function Page() {
                         <Table.Td>{readableDate(item.endDate, 'DD MMMM YYYY HH:MM')}</Table.Td>
                         <Table.Td>{item.degreeOfDifficulty}</Table.Td>
                         <Table.Td>{item.status}</Table.Td>
+                        <Table.Td>{item.approveStatus}</Table.Td>
                         <Table.Td>{readableDate(item.createdAt, 'YYYY-MM-DD HH:MM')}</Table.Td>
                         <Table.Td>{readableDate(item.updatedAt, 'YYYY-MM-DD HH:MM')}</Table.Td>
                         <Table.Td>

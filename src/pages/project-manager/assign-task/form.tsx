@@ -26,6 +26,7 @@ export default function Page() {
       end_date: new Date() || undefined,
       difficulty: 'EASY',
       status: 'PENDING',
+      approve_status: 'PENDING',
     },
     validate: {
       user_id: (value) => {
@@ -56,6 +57,10 @@ export default function Page() {
         if (!value) return 'Status is required';
         return null;
       },
+      approve_status: (value) => {
+        if (!value) return 'Approve is required';
+        return null;
+      },
     },
   });
   const { back, query, isReady } = useRouter();
@@ -72,7 +77,8 @@ export default function Page() {
 
   const onSubmit = async (values: any) => {
     try {
-      const { project_id, user_id, name, description, start_date, end_date, difficulty, status } = values;
+      const { project_id, user_id, name, description, start_date, end_date, difficulty, status, approve_status } =
+        values;
 
       if (isEdit) {
         const result = await ProjectTaskRepository.api.update(id as string, {
@@ -84,6 +90,7 @@ export default function Page() {
           description,
           degreeOfDifficulty: difficulty,
           status,
+          approveStatus: approve_status,
         });
 
         notifications.show({
@@ -101,6 +108,7 @@ export default function Page() {
           description,
           degreeOfDifficulty: difficulty,
           status,
+          approveStatus: approve_status,
           createdBy: authCtx.jwtPayload?.sub || 0,
         });
 
@@ -134,6 +142,7 @@ export default function Page() {
       setFieldValue('end_date', new Date(dataTask.endDate));
       setFieldValue('difficulty', dataTask.degreeOfDifficulty);
       setFieldValue('status', dataTask.status);
+      setFieldValue('approve_status', dataTask.approveStatus);
     }
     return () => {};
   }, [dataTask, isReady, setFieldValue]);
@@ -211,6 +220,13 @@ export default function Page() {
                   <Radio value="ON_PROGRESS" label="On Progress" />
                   <Radio value="NEED_HELP" label="Need Help !" />
                   <Radio value="CANCEL" label="Cancel" />
+                </Group>
+              </Radio.Group>
+              <Radio.Group label="Approve" {...form.getInputProps('approve_status')}>
+                <Group mt={'sm'}>
+                  <Radio value="APPROVED" label="Approve" />
+                  <Radio value="PENDING" label="Pending" />
+                  <Radio value="REJECTED" label="Rejected" />
                 </Group>
               </Radio.Group>
             </Stack>

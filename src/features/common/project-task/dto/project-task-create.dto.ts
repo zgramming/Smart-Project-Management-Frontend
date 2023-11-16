@@ -1,4 +1,4 @@
-import { DegreeOfDifficultyEnum, ProjectTaskStatusEnum } from '@/utils/enum';
+import { ApproveStatusEnum, DegreeOfDifficultyEnum, ProjectTaskStatusEnum } from '@/utils/enum';
 
 export interface ProjectTaskCreateDTO {
   userId: number;
@@ -9,5 +9,6 @@ export interface ProjectTaskCreateDTO {
   endDate: Date;
   degreeOfDifficulty?: DegreeOfDifficultyEnum;
   status?: ProjectTaskStatusEnum;
+  approveStatus?: ApproveStatusEnum;
   createdBy: number;
 }

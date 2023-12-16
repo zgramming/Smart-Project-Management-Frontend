@@ -151,7 +151,7 @@ export default function Page() {
                   </Table.Tr>
                 </Table.Thead>
                 <tbody>
-                  {dataTask?.map((item, index) => {
+                  {dataTask?.map(function (item, index) {
                     return (
                       <Table.Tr key={item.id}>
                         <Table.Td>{index + 1}</Table.Td>

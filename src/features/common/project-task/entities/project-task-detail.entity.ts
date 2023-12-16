@@ -9,10 +9,11 @@ interface Data {
   projectId: number;
   userId: number;
   name: string;
-  description: any;
+  description?: string;
   startDate: string;
   endDate: string;
   degreeOfDifficulty: string;
+  linkTask?: string;
   status: string;
   approveStatus: string;
   createdAt: string;

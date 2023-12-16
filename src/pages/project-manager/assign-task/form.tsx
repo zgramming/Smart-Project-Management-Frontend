@@ -1,14 +1,16 @@
 import AdminLayout from '@/components/layout/AdminLayout';
 import { AuthenticationContext } from '@/context/AuthenticationContext';
+import { ProjectTaskHistoryRepository } from '@/features/common/project-task-history/project-task-history.repository';
 import { ProjectTaskRepository } from '@/features/common/project-task/project-task.repository';
 import { ProjectRepository } from '@/features/common/project/project.repository';
 import { UserRepository } from '@/features/setting/user/user.repository';
-import { getErrorMessageAxios } from '@/utils/function';
-import { Stack, Card, Group, Button, LoadingOverlay, Select, TextInput, Textarea, Radio } from '@mantine/core';
+import { getErrorMessageAxios, readableDate } from '@/utils/function';
+import { Stack, Card, Group, Button, LoadingOverlay, Select, TextInput, Textarea, Radio, Table } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCalendar } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactNode, useContext, useEffect } from 'react';
 
@@ -21,7 +23,7 @@ export default function Page() {
       user_id: '',
       project_id: '',
       name: '',
-      description: '',
+      description: undefined as string | undefined,
       start_date: new Date() || undefined,
       end_date: new Date() || undefined,
       difficulty: 'EASY',
@@ -69,6 +71,9 @@ export default function Page() {
   const { setFieldValue } = form;
 
   const { data: dataTask, isLoading: isLoadingTask } = ProjectTaskRepository.hooks.useById(id as string | undefined);
+  const { data: taskHistory, isLoading: isLoadingTaskHistory } = ProjectTaskHistoryRepository.hooks.useListTaskHistory(
+    id as string | undefined,
+  );
   const { data: dataProject } = ProjectRepository.hooks.useListProject({
     page: 1,
     pageSize: 1000,
@@ -137,7 +142,7 @@ export default function Page() {
       setFieldValue('user_id', `${dataTask.userId}`);
       setFieldValue('project_id', `${dataTask.projectId}`);
       setFieldValue('name', dataTask.name);
-      setFieldValue('description', dataTask.description);
+      if (dataTask.description) setFieldValue('description', dataTask.description);
       setFieldValue('start_date', new Date(dataTask.startDate));
       setFieldValue('end_date', new Date(dataTask.endDate));
       setFieldValue('difficulty', dataTask.degreeOfDifficulty);
@@ -160,6 +165,42 @@ export default function Page() {
               <Button type="submit">Simpan</Button>
             </Group>
           </Card>
+          {taskHistory && (
+            <Card withBorder>
+              <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>
+                Developer Task Histories
+              </Card.Section>
+              <Stack gap={'md'}>
+                <Table.ScrollContainer minWidth={500}>
+                  <LoadingOverlay visible={isLoadingTaskHistory} />
+                  <Table verticalSpacing={'md'}>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>NO</Table.Th>
+                        <Table.Th>LINK TASK</Table.Th>
+                        <Table.Th>DESCRIPTION</Table.Th>
+                        <Table.Th>STATUS</Table.Th>
+                        <Table.Th>CREATED AT</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {taskHistory.map((item, index) => (
+                        <Table.Tr key={item.id}>
+                          <Table.Td>{index + 1}</Table.Td>
+                          <Table.Td>
+                            <Link href={item.linkTask}>{item.linkTask}</Link>
+                          </Table.Td>
+                          <Table.Td>{item.description}</Table.Td>
+                          <Table.Td>{item.status}</Table.Td>
+                          <Table.Td>{readableDate(item.createdAt, 'DD MMMM YYYY HH:mm')}</Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                </Table.ScrollContainer>
+              </Stack>
+            </Card>
+          )}
           <Card withBorder>
             <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>
               Form
@@ -222,6 +263,13 @@ export default function Page() {
                   <Radio value="CANCEL" label="Cancel" />
                 </Group>
               </Radio.Group>
+            </Stack>
+          </Card>
+          <Card withBorder>
+            <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>
+              Approval
+            </Card.Section>
+            <Stack gap={'md'}>
               <Radio.Group label="Approve" {...form.getInputProps('approve_status')}>
                 <Group mt={'sm'}>
                   <Radio value="APPROVED" label="Approve" />

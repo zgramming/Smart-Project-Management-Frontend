@@ -22,7 +22,7 @@ import { IconUpload } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { ReactNode, useContext, useEffect } from 'react';
 
-Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;
+Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Document">{page}</AdminLayout>;
 
 export default function Page() {
   const authCtx = useContext(AuthenticationContext);

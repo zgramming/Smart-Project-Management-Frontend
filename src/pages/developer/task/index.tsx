@@ -127,7 +127,7 @@ export default function Page() {
                         <Table.Td>
                           <Group>
                             <Button variant="outline" size="xs" color="blue" onClick={() => onEditButton(item.id)}>
-                              Edit
+                              Update
                             </Button>
                           </Group>
                         </Table.Td>

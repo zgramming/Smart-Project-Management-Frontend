@@ -2,18 +2,19 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import { ProjectTaskRepository } from '@/features/common/project-task/project-task.repository';
 import { DeveloperTaskRepository } from '@/features/developer/task/developer-task.repository';
 import { getErrorMessageAxios } from '@/utils/function';
-import { Stack, Card, Group, Button, Radio, LoadingOverlay, Textarea } from '@mantine/core';
+import { Stack, Card, Group, Button, Radio, LoadingOverlay, Textarea, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect } from 'react';
 
-Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Data Badan Usaha">{page}</AdminLayout>;
+Page.getLayout = (page: ReactNode) => <AdminLayout title="Form Task">{page}</AdminLayout>;
 
 export default function Page() {
   const form = useForm({
     initialValues: {
-      description: '',
+      description: undefined as string | undefined,
+      linkTask: undefined as string | undefined,
       status: 'ON_PROGRESS',
     },
     validate: {
@@ -65,6 +66,8 @@ export default function Page() {
     }
 
     if (task) {
+      console.log({ task });
+
       setFieldValue('status', task.status);
     }
 
@@ -90,6 +93,12 @@ export default function Page() {
             </Card.Section>
             <Stack gap={'md'}>
               <Textarea label="Description" placeholder="Description" {...form.getInputProps('description')} />
+              <TextInput
+                label="Link Task"
+                placeholder="Link Task"
+                description="You can use link from github, gitlab, etc"
+                {...form.getInputProps('linkTask')}
+              />
               <Radio.Group label="Status" {...form.getInputProps('status')}>
                 <Group mt={'sm'}>
                   <Radio value="FINISH" label="Finish" />

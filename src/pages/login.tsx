@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useForm } from '@mantine/form';
 import Logo from '@images/logo.png';
 import { Button, PasswordInput, Stack, TextInput } from '@mantine/core';
-import BGLogin from '@images/bg-login.jpg';
+import BGLogin from '@images/bg-login.webp';
 import { getErrorMessageAxios } from '@/utils/function';
 import { notifications } from '@mantine/notifications';
 import { AuthRepository } from '@/features/auth/auth.repository';

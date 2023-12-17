@@ -13,7 +13,6 @@ interface Data {
   startDate: string;
   endDate: string;
   degreeOfDifficulty: string;
-  linkTask?: string;
   status: string;
   approveStatus: string;
   createdAt: string;

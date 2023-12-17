@@ -3,7 +3,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import { DeveloperDashboardRepository } from '@/features/developer/dashboard/developer-dashboard.repository';
 import { baseUrl } from '@/utils/constant';
 import { getErrorMessageAxios, readableDate } from '@/utils/function';
-import { Button, Card, Grid, Group, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { Alert, Button, Card, Grid, Group, List, LoadingOverlay, Stack, Table } from '@mantine/core';
 import { YearPickerInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import {
@@ -21,6 +21,7 @@ import {
   IconBrandZoom,
   IconBulb,
   IconDownload,
+  IconInfoCircle,
   IconSubtask,
   IconUserSquareRounded,
 } from '@tabler/icons-react';
@@ -39,24 +40,25 @@ export default function Page() {
     DeveloperDashboardRepository.hooks.useResumeDashboard(date.getFullYear());
 
   const {
-    meetingWillBeHeld,
-    totalClient,
-    totalMeeting,
-    totalProject,
-    totalProjectActive,
-    totalProjectFinish,
-    totalProjectInactive,
-    totalProjectSuspend,
-    totalTask,
-    totalTaskDifficultyEasy,
-    totalTaskDifficultyHard,
-    totalTaskDifficultyMedium,
-    totalTaskDifficultyVeryHard,
-    totalTaskStatusCancel,
-    totalTaskStatusFinish,
-    totalTaskStatusInProgress,
-    totalTaskStatusNeedHelp,
-    totalTaskStatusPending,
+    totalClient = 0,
+    totalMeeting = 0,
+    totalProject = 0,
+    totalProjectActive = 0,
+    totalProjectFinish = 0,
+    totalProjectInactive = 0,
+    totalProjectSuspend = 0,
+    totalTask = 0,
+    totalTaskDifficultyEasy = 0,
+    totalTaskDifficultyHard = 0,
+    totalTaskDifficultyMedium = 0,
+    totalTaskDifficultyVeryHard = 0,
+    totalTaskStatusCancel = 0,
+    totalTaskStatusFinish = 0,
+    totalTaskStatusInProgress = 0,
+    totalTaskStatusNeedHelp = 0,
+    totalTaskStatusPending = 0,
+    meetingWillBeHeld = [],
+    newTaskAssignedToYou = [],
   } = resumeDashboard || {};
 
   const now = new Date();
@@ -65,6 +67,8 @@ export default function Page() {
     nowPlusSevenDays,
     'DD MMMM YYYY',
   )}`;
+
+  const isHaveNewTaskAssignedToYou = newTaskAssignedToYou.length > 0;
 
   const onDownloadReport = async () => {
     try {
@@ -89,6 +93,7 @@ export default function Page() {
       setIsLoadingDownloadReport(false);
     }
   };
+
   return (
     <Stack gap={'md'}>
       <LoadingOverlay visible={isLoadingResumeDashboard} />
@@ -108,6 +113,30 @@ export default function Page() {
         </Group>
       </Card>
 
+      {isHaveNewTaskAssignedToYou && (
+        <Alert
+          variant="filled"
+          color="blue"
+          title={`${newTaskAssignedToYou.length} New Task Assigned To You`}
+          icon={<IconInfoCircle />}
+        >
+          <List type="ordered">
+            {newTaskAssignedToYou.map((item) => {
+              return (
+                <List.Item key={item.id}>
+                  <Link
+                    href={`/developer/task/form?id=${item.id}&action=update`}
+                    className="text-white decoration-white"
+                  >
+                    {item.Project.name} - {item.name}
+                  </Link>
+                </List.Item>
+              );
+            })}
+          </List>
+        </Alert>
+      )}
+
       <Card padding={'md'} radius={'lg'} shadow="sm">
         <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>
           Meeting will be held in next 7 days. ({textMeetingWillBeHeld})
@@ -126,7 +155,7 @@ export default function Page() {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {meetingWillBeHeld?.map((item) => {
+              {meetingWillBeHeld.map((item) => {
                 let textRemainingTime = '';
                 const diffInDays = dayjs(item.startDate).diff(now, 'day');
                 const diffInHours = dayjs(item.startDate).diff(now, 'hour');
@@ -167,7 +196,7 @@ export default function Page() {
           <CardDashboard
             icon={<IconUserSquareRounded size={32} />}
             title="Client"
-            total={totalClient || 0}
+            total={totalClient}
             onClickDetail={() => {}}
           />
         </Grid.Col>
@@ -181,7 +210,7 @@ export default function Page() {
           <CardDashboard
             icon={<IconBrandZoom size={32} />}
             title="Meeting"
-            total={totalMeeting || 0}
+            total={totalMeeting}
             onClickDetail={() => {}}
           />
         </Grid.Col>
@@ -205,7 +234,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBulb size={32} />}
                   title="Total Project"
-                  total={totalProject || 0}
+                  total={totalProject}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -224,7 +253,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellRinging size={32} />}
                   title="Active"
-                  total={totalProjectActive || 0}
+                  total={totalProjectActive}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -238,7 +267,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellCheck size={32} />}
                   title="Finish"
-                  total={totalProjectFinish || 0}
+                  total={totalProjectFinish}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -252,7 +281,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellOff size={32} />}
                   title="Inactive"
-                  total={totalProjectInactive || 0}
+                  total={totalProjectInactive}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -266,7 +295,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellCancel size={32} />}
                   title="Suspend"
-                  total={totalProjectSuspend || 0}
+                  total={totalProjectSuspend}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -293,7 +322,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconSubtask size={32} />}
                   title="Total Task"
-                  total={totalTask || 0}
+                  total={totalTask}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -312,7 +341,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellCheck size={32} />}
                   title="Finish"
-                  total={totalTaskStatusFinish || 0}
+                  total={totalTaskStatusFinish}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -326,7 +355,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellCancel size={32} />}
                   title="Cancel"
-                  total={totalTaskStatusCancel || 0}
+                  total={totalTaskStatusCancel}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -340,7 +369,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellCode size={32} />}
                   title="In Progress"
-                  total={totalTaskStatusInProgress || 0}
+                  total={totalTaskStatusInProgress}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -354,7 +383,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellQuestion size={32} />}
                   title="Need Help"
-                  total={totalTaskStatusNeedHelp || 0}
+                  total={totalTaskStatusNeedHelp}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -368,7 +397,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBellZ size={32} />}
                   title="Pending"
-                  total={totalTaskStatusPending || 0}
+                  total={totalTaskStatusPending}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -387,7 +416,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBattery1Filled size={32} />}
                   title="Easy"
-                  total={totalTaskDifficultyEasy || 0}
+                  total={totalTaskDifficultyEasy}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -401,7 +430,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBattery2Filled size={32} />}
                   title="Medium"
-                  total={totalTaskDifficultyMedium || 0}
+                  total={totalTaskDifficultyMedium}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -415,7 +444,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBattery3Filled size={32} />}
                   title="Hard"
-                  total={totalTaskDifficultyHard || 0}
+                  total={totalTaskDifficultyHard}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>
@@ -429,7 +458,7 @@ export default function Page() {
                 <CardDashboard
                   icon={<IconBattery4Filled size={32} />}
                   title="Very Hard"
-                  total={totalTaskDifficultyVeryHard || 0}
+                  total={totalTaskDifficultyVeryHard}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>

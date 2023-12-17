@@ -11,4 +11,5 @@ export interface ProjectTaskCreateDTO {
   status?: ProjectTaskStatusEnum;
   approveStatus?: ApproveStatusEnum;
   createdBy: number;
+  updatedBy?: number;
 }

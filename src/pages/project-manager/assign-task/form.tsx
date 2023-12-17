@@ -85,6 +85,8 @@ export default function Page() {
       const { project_id, user_id, name, description, start_date, end_date, difficulty, status, approve_status } =
         values;
 
+      const userLoginId = authCtx.jwtPayload?.sub || 0;
+
       if (isEdit) {
         const result = await ProjectTaskRepository.api.update(id as string, {
           projectId: parseInt(project_id),
@@ -96,6 +98,7 @@ export default function Page() {
           degreeOfDifficulty: difficulty,
           status,
           approveStatus: approve_status,
+          updatedBy: userLoginId,
         });
 
         notifications.show({
@@ -114,7 +117,7 @@ export default function Page() {
           degreeOfDifficulty: difficulty,
           status,
           approveStatus: approve_status,
-          createdBy: authCtx.jwtPayload?.sub || 0,
+          createdBy: userLoginId,
         });
 
         notifications.show({

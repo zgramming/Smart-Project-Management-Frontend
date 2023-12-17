@@ -23,6 +23,7 @@ interface Data {
   totalTaskDifficultyVeryHard: number;
   totalClient: number;
   meetingWillBeHeld: MeetingWillBeHeld[];
+  newTaskAssignedToYou: NewTaskAssignedToYou[];
 }
 
 interface MeetingWillBeHeld {
@@ -48,4 +49,18 @@ interface ProjectClient {
   id: string;
   name: string;
   code: string;
+}
+
+interface NewTaskAssignedToYou {
+  id: string;
+  name: string;
+  description: string;
+  degreeOfDifficulty: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  Project: {
+    id: number;
+    name: string;
+  };
 }

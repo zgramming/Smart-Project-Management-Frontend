@@ -3,11 +3,12 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import { ProjectManagerDashboardRepository } from '@/features/project-manager/dashboard/project-manager-dashboard.repository';
 import { baseUrl } from '@/utils/constant';
 import { getErrorMessageAxios, readableDate } from '@/utils/function';
-import { Button, Card, Grid, Group, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { Alert, Button, Card, Grid, Group, List, LoadingOverlay, Stack, Table } from '@mantine/core';
 import { YearPickerInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
-import { IconBrandZoom, IconBulb, IconDownload, IconFile, IconSubtask } from '@tabler/icons-react';
+import { IconBrandZoom, IconBulb, IconDownload, IconFile, IconInfoCircle, IconSubtask } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useState } from 'react';
 
 Page.getLayout = function getLayout(page: any) {
@@ -20,7 +21,16 @@ export default function Page() {
 
   const { data: resumeDashboard, isLoading: isLoadingResumeDashboard } =
     ProjectManagerDashboardRepository.hooks.useResumeDashboard(date.getFullYear());
-  const { projectsWillBeEndSoon, totalDocument, totalMeeting, totalProject, totalTask } = resumeDashboard || {};
+  const {
+    projectsWillBeEndSoon = [],
+    newUpdateFromAssignedTaskToYouToday = [],
+    totalDocument = 0,
+    totalMeeting = 0,
+    totalProject = 0,
+    totalTask = 0,
+  } = resumeDashboard || {};
+
+  const isHaveNewUpdateFromAssignedTaskToYouToday = newUpdateFromAssignedTaskToYouToday.length > 0;
 
   const onDownloadReport = async () => {
     try {
@@ -65,6 +75,29 @@ export default function Page() {
           <YearPickerInput placeholder="Pick date" value={date} onChange={(value) => setDate(value as Date)} />
         </Group>
       </Card>
+      {isHaveNewUpdateFromAssignedTaskToYouToday && (
+        <Alert
+          variant="filled"
+          color="blue"
+          title={`${newUpdateFromAssignedTaskToYouToday.length} New Update From Assigned Task To You Today`}
+          icon={<IconInfoCircle />}
+        >
+          <List type="ordered">
+            {newUpdateFromAssignedTaskToYouToday.map((item) => {
+              return (
+                <List.Item key={item.id}>
+                  <Link
+                    href={`/project-manager/assign-task/form?id=${item.id}&action=edit`}
+                    className="text-white decoration-white"
+                  >
+                    {item.Project.name} - {item.name}
+                  </Link>
+                </List.Item>
+              );
+            })}
+          </List>
+        </Alert>
+      )}
       <Grid gutter={'md'} pb={'xs'}>
         <Grid.Col
           span={{
@@ -73,12 +106,7 @@ export default function Page() {
             lg: 3,
           }}
         >
-          <CardDashboard
-            icon={<IconBulb size={32} />}
-            title="Project"
-            total={totalProject || 0}
-            onClickDetail={() => {}}
-          />
+          <CardDashboard icon={<IconBulb size={32} />} title="Project" total={totalProject} onClickDetail={() => {}} />
         </Grid.Col>
         <Grid.Col
           span={{
@@ -90,7 +118,7 @@ export default function Page() {
           <CardDashboard
             icon={<IconBrandZoom size={32} />}
             title="Meeting"
-            total={totalMeeting || 0}
+            total={totalMeeting}
             onClickDetail={() => {}}
           />
         </Grid.Col>
@@ -104,7 +132,7 @@ export default function Page() {
           <CardDashboard
             icon={<IconFile size={32} />}
             title="Document"
-            total={totalDocument || 0}
+            total={totalDocument}
             onClickDetail={() => {}}
           />
         </Grid.Col>
@@ -118,7 +146,7 @@ export default function Page() {
           <CardDashboard
             icon={<IconSubtask size={32} />}
             title="Task Developer"
-            total={totalTask || 0}
+            total={totalTask}
             onClickDetail={() => {}}
           />
         </Grid.Col>
@@ -147,7 +175,7 @@ export default function Page() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {projectsWillBeEndSoon?.map((project) => {
+                {projectsWillBeEndSoon.map((project) => {
                   const diffInDays = dayjs(project.endDate).diff(dayjs(), 'days');
 
                   return (

@@ -55,7 +55,7 @@ export default function Page() {
     totalTaskStatusCancel = 0,
     totalTaskStatusFinish = 0,
     totalTaskStatusInProgress = 0,
-    totalTaskStatusNeedHelp = 0,
+    totalTaskStatusRevision = 0,
     totalTaskStatusPending = 0,
     meetingWillBeHeld = [],
     newTaskAssignedToYou = [],
@@ -382,8 +382,8 @@ export default function Page() {
               >
                 <CardDashboard
                   icon={<IconBellQuestion size={32} />}
-                  title="Need Help"
-                  total={totalTaskStatusNeedHelp}
+                  title="Revision"
+                  total={totalTaskStatusRevision}
                   onClickDetail={() => {}}
                 />
               </Grid.Col>

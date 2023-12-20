@@ -15,7 +15,7 @@ interface Data {
   totalTaskStatusFinish: number;
   totalTaskStatusPending: number;
   totalTaskStatusInProgress: number;
-  totalTaskStatusNeedHelp: number;
+  totalTaskStatusRevision: number;
   totalTaskStatusCancel: number;
   totalTaskDifficultyEasy: number;
   totalTaskDifficultyMedium: number;

@@ -104,7 +104,7 @@ export default function Page() {
                   <Radio value="FINISH" label="Finish" />
                   <Radio value="PENDING" label="Pending" />
                   <Radio value="ON_PROGRESS" label="On Progress" />
-                  <Radio value="NEED_HELP" label="Need Help !" />
+                  <Radio value="REVISION" label="Revisi" />
                   <Radio value="CANCEL" label="Cancel" />
                 </Group>
               </Radio.Group>

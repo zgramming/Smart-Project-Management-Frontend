@@ -1,3 +1,4 @@
+import InputSpan from '@/components/InputSpan';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { ProjectTaskRepository } from '@/features/common/project-task/project-task.repository';
 import { DeveloperTaskRepository } from '@/features/developer/task/developer-task.repository';
@@ -86,6 +87,14 @@ export default function Page() {
               </Button>
               <Button type="submit">Simpan</Button>
             </Group>
+          </Card>
+          <Card withBorder>
+            <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>
+              Deskripsi Task
+            </Card.Section>
+            <Stack gap={'md'}>
+              <InputSpan label="Deskripsi" content={task?.description} />
+            </Stack>
           </Card>
           <Card withBorder>
             <Card.Section withBorder inheritPadding py={'sm'} mb={'sm'}>

@@ -140,12 +140,12 @@ export default function Page() {
                     <Table.Th>CLIENT</Table.Th>
                     <Table.Th>PROJECT</Table.Th>
                     <Table.Th>NAME</Table.Th>
-                    <Table.Th>FILE</Table.Th>
                     <Table.Th>STATUS</Table.Th>
+                    <Table.Th>FILE</Table.Th>
                     <Table.Th>KONTROL</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
-                <tbody>
+                <Table.Tbody>
                   {dataDocument?.map((item, index) => {
                     const isHaveFile = item.file.length > 0 && item.file !== '';
                     return (
@@ -185,7 +185,7 @@ export default function Page() {
                       </Table.Tr>
                     );
                   })}
-                </tbody>
+                </Table.Tbody>
               </Table>
             </Table.ScrollContainer>
             <PaginationComponent

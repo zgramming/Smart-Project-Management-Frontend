@@ -100,7 +100,7 @@ export default function Page() {
                     <Table.Th>KONTROL</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
-                <tbody>
+                <Table.Tbody>
                   {tasks?.map((item, index) => {
                     return (
                       <Table.Tr key={item.id}>
@@ -134,7 +134,7 @@ export default function Page() {
                       </Table.Tr>
                     );
                   })}
-                </tbody>
+                </Table.Tbody>
               </Table>
             </Table.ScrollContainer>
             <PaginationComponent

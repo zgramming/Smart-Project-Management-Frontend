@@ -110,7 +110,7 @@ export default function Page() {
                 </Stack>
                 <Stack gap={5}>
                   <div className="text-base font-medium lg:text-xl">Password</div>
-                  <PasswordInput placeholder="Username" {...form.getInputProps('password')} />
+                  <PasswordInput placeholder="Password" {...form.getInputProps('password')} />
                 </Stack>
                 <Button variant="filled" type="submit" size="lg" fullWidth>
                   Masuk

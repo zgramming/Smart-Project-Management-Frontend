@@ -28,6 +28,8 @@ import {
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useState } from 'react';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 Page.getLayout = function getLayout(page: any) {
   return <AdminLayout title="Dashboard">{page}</AdminLayout>;
@@ -156,21 +158,15 @@ export default function Page() {
             </Table.Thead>
             <Table.Tbody>
               {meetingWillBeHeld.map((item) => {
-                let textRemainingTime = '';
-                const diffInDays = dayjs(item.startDate).diff(now, 'day');
-                const diffInHours = dayjs(item.startDate).diff(now, 'hour');
-                if (diffInDays > 0) {
-                  textRemainingTime = `${diffInDays} Days ${diffInHours} Hours`;
-                } else {
-                  textRemainingTime = `${diffInHours} Hours`;
-                }
+               const startDate = dayjs(item.startDate);
+               const remainingTime = dayjs().from(startDate, true);
                 return (
                   <Table.Tr key={item.id}>
                     <Table.Td>{item.Project.ProjectClient.name}</Table.Td>
                     <Table.Td>{item.Project.name}</Table.Td>
                     <Table.Td>{item.name}</Table.Td>
                     <Table.Td>{readableDate(item.startDate, 'DD MMMM YYYY - H:m')}</Table.Td>
-                    <Table.Td>{textRemainingTime}</Table.Td>
+                    <Table.Td>{remainingTime}</Table.Td>
                     <Table.Td>{item.method}</Table.Td>
                     <Table.Td>
                       <Link href={item.link} target="_blank">
